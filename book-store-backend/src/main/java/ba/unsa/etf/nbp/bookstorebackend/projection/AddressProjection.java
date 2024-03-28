@@ -1,28 +1,31 @@
 package ba.unsa.etf.nbp.bookstorebackend.projection;
 
+import org.springframework.lang.Nullable;
+
 public class AddressProjection {
 
-    private int id;
+    private Integer addressId;
     private String street;
     private String zipCode;
+    private Integer cityId;
+    private String cityName;
+    private Integer countryId;
+    private String countryName;
+
 
     public AddressProjection() {
     }
 
-    public AddressProjection(int id, String street, String zipCode) {
-        this.id = id;
-        this.street = street;
-        this.zipCode = zipCode;
+    @Nullable
+    public int getAddressId() {
+        return addressId;
     }
 
-    public int getId() {
-        return id;
+    public void setAddressId(int addressId) {
+        this.addressId = addressId;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
+    @Nullable
     public String getStreet() {
         return street;
     }
@@ -31,11 +34,46 @@ public class AddressProjection {
         this.street = street;
     }
 
+    @Nullable
     public String getZipCode() {
         return zipCode;
     }
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public Integer getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
+    }
+
+    public Integer getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(Integer countryId) {
+        this.countryId = countryId;
+    }
+
+    @Nullable
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    @Nullable
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
     }
 }

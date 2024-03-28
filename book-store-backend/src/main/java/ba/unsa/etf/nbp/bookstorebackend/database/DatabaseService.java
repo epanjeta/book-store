@@ -13,7 +13,7 @@ public class DatabaseService {
     private static final String DRIVER = "oracle.jdbc.driver.OracleDriver";
     private static String url = System.getenv("DATABASE_URL");
     private static String username = System.getenv("DATABASE_USERNAME");
-    private static String password  = System.getenv("DATABASE_PASSWORD");
+    private static String password = System.getenv("DATABASE_PASSWORD");
 
     private Connection connection;
 
@@ -22,7 +22,7 @@ public class DatabaseService {
         try {
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(url, username, password);
-
+            connection.setAutoCommit(false);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }

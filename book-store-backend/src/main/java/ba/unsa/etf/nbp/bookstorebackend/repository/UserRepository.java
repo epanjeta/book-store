@@ -1,9 +1,6 @@
 package ba.unsa.etf.nbp.bookstorebackend.repository;
 
 import ba.unsa.etf.nbp.bookstorebackend.Role;
-import ba.unsa.etf.nbp.bookstorebackend.builder.SelectQueryBuilder;
-import ba.unsa.etf.nbp.bookstorebackend.constants.RoleFields;
-import ba.unsa.etf.nbp.bookstorebackend.constants.UserFields;
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.UserMapper;
 import ba.unsa.etf.nbp.bookstorebackend.projection.AddressProjection;
@@ -22,36 +19,55 @@ import java.util.List;
 @Repository
 public class UserRepository {
     private static Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
-    @Autowired protected DatabaseService databaseService;
-    @Autowired protected AddressRepository addressRepository;
-    protected UserStatements userStatements = new UserStatements();
+    @Autowired
+    protected DatabaseService databaseService;
+    @Autowired
+    protected AddressRepository addressRepository;
 
     /**
      * Fetches all basic user data
      *
      * @return the list of all users
      */
-    public List<UserProjection> findAll(Role role) {
+    public List<UserProjection> findAll() {
         Connection connection = databaseService.getConnection();
         try {
-            ResultSet rs = userStatements.findAllUsers(role.getDatabaseId());
-            List<UserProjection> userProjections = new ArrayList<>();
-            if (rs.next()) {
-                AddressProjection addressProjection = null;
-                if(rs.getObject("ADDRESS_ID") != null) {
-                    int addressId = rs.getInt("ADDRESS_ID");
-                    addressProjection = addressRepository.findById(addressId);
-                }
-                userProjections.add(
-                        UserMapper.createUserFromResultSet(rs, rs.getObject(6, Role.class), addressProjection));
-            }
-
-            return userProjections;
+            ResultSet rs = UserStatements.findAllUsers(connection);
+            return getUserProjections(rs);
         } catch (SQLException e) {
-            LOGGER.error("Exception when acquiring JDBC connection for class: "
-                    + UserRepository.class);
+            LOGGER.error("Exception when acquiring JDBC connection for class: " + UserRepository.class);
             throw new RuntimeException(e);
         }
 
+    }
+
+    /**
+     * Fetches all basic user data
+     *
+     * @return the list of all users
+     */
+    public List<UserProjection> findAllWithAddress(Role role) {
+        Connection connection = databaseService.getConnection();
+        try {
+            ResultSet rs = UserStatements.findAllUsersWithAddresses(connection, role);
+            return getUserProjections(rs);
+        } catch (SQLException e) {
+            LOGGER.error("Exception when acquiring JDBC connection for class: " + UserRepository.class);
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private List<UserProjection> getUserProjections(ResultSet rs) throws SQLException {
+        if (rs == null) {
+            return new ArrayList<>();
+        }
+        List<UserProjection> userProjections = new ArrayList<>();
+        while (rs.next()) {
+            userProjections
+                    .add(UserMapper.createUserFromResultSet(rs, rs.getObject(7, Role.class)));
+        }
+
+        return userProjections;
     }
 }

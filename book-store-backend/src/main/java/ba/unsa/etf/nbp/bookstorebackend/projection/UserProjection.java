@@ -21,19 +21,6 @@ public class UserProjection {
     public UserProjection() {
     }
 
-    public UserProjection(int id, String firstName, String lastName, String email, String userName, String password, String phoneNumber, LocalDate birthDay, Role role, AddressProjection addressProjection) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.userName = userName;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.birthDay = birthDay;
-        this.role = role;
-        this.addressProjection = addressProjection;
-    }
-
     public int getId() {
         return id;
     }
