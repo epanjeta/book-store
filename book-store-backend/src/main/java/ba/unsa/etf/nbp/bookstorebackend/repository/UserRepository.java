@@ -6,7 +6,9 @@ import ba.unsa.etf.nbp.bookstorebackend.constants.RoleFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.UserFields;
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.UserMapper;
+import ba.unsa.etf.nbp.bookstorebackend.projection.AddressProjection;
 import ba.unsa.etf.nbp.bookstorebackend.projection.UserProjection;
+import ba.unsa.etf.nbp.bookstorebackend.statements.UserStatements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import java.util.List;
 public class UserRepository {
     private static Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
     @Autowired protected DatabaseService databaseService;
+    @Autowired protected AddressRepository addressRepository;
+    protected UserStatements userStatements = new UserStatements();
 
     /**
      * Fetches all basic user data
@@ -29,26 +33,17 @@ public class UserRepository {
      */
     public List<UserProjection> findAll(Role role) {
         Connection connection = databaseService.getConnection();
-
         try {
-            Statement statement = connection.createStatement();
-            String selectAllUsers = SelectQueryBuilder.create()
-                    .select(UserFields.FIRST_NAME,
-                            UserFields.LAST_NAME,
-                            UserFields.EMAIL,
-                            UserFields.USERNAME,
-                            UserFields.BIRTH_DATE,
-                            RoleFields.NAME)
-                    .from(UserFields.TABLE_NAME,
-                            "INNER JOIN " + RoleFields.TABLE_NAME + " ON "
-                                    + UserFields.ROLE_ID + " = " + RoleFields.ID)
-                    .where(UserFields.ROLE_ID + " = " + role.getDatabaseId())
-                    .build();
-            ResultSet rs = statement.executeQuery(selectAllUsers);
+            ResultSet rs = userStatements.findAllUsers(role.getDatabaseId());
             List<UserProjection> userProjections = new ArrayList<>();
-            while (rs.next()) {
+            if (rs.next()) {
+                AddressProjection addressProjection = null;
+                if(rs.getObject("ADDRESS_ID") != null) {
+                    int addressId = rs.getInt("ADDRESS_ID");
+                    addressProjection = addressRepository.findById(addressId);
+                }
                 userProjections.add(
-                        UserMapper.createUserFromResultSet(rs, rs.getObject(6, Role.class)));
+                        UserMapper.createUserFromResultSet(rs, rs.getObject(6, Role.class), addressProjection));
             }
 
             return userProjections;

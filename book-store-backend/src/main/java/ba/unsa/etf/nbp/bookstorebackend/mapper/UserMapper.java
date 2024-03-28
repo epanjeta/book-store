@@ -2,7 +2,10 @@ package ba.unsa.etf.nbp.bookstorebackend.mapper;
 
 import ba.unsa.etf.nbp.bookstorebackend.Role;
 import ba.unsa.etf.nbp.bookstorebackend.constants.UserFields;
+import ba.unsa.etf.nbp.bookstorebackend.projection.AddressProjection;
 import ba.unsa.etf.nbp.bookstorebackend.projection.UserProjection;
+import ba.unsa.etf.nbp.bookstorebackend.repository.AddressRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,6 +16,8 @@ import java.util.List;
 public class UserMapper {
 
     private UserMapper() {}
+
+
 
     public static UserProjection createUserFromResultSet(ResultSet resultSet, Role role) {
         try {
@@ -53,5 +58,31 @@ public class UserMapper {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+
+    }
+
+    public static UserProjection createUserFromResultSet(ResultSet resultSet, Role role, AddressProjection addressProjection){
+        try {
+            int id = resultSet.getInt("ID");
+            String firstName = resultSet.getString("FIRST_NAME");
+            String lastName = resultSet.getString("LAST_NAME");
+            String email = resultSet.getString("EMAIL");
+            String password = resultSet.getString("PASSWORD");
+            String username = resultSet.getString("USERNAME");
+            String phoneNumber = resultSet.getString("PHONE_NUMBER");
+            LocalDate birthDate = resultSet.getObject("BIRTH_DATE", LocalDate.class);
+
+            UserProjection user = new UserProjection(id, firstName, lastName, email, username, password, phoneNumber, birthDate, role, addressProjection);
+
+            return user;
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+
     }
 }

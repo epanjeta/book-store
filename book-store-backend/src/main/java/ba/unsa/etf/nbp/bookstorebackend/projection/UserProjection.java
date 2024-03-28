@@ -16,6 +16,24 @@ public class UserProjection {
     private LocalDate birthDay;
     private Role role;
 
+    private AddressProjection addressProjection;
+
+    public UserProjection() {
+    }
+
+    public UserProjection(int id, String firstName, String lastName, String email, String userName, String password, String phoneNumber, LocalDate birthDay, Role role, AddressProjection addressProjection) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.userName = userName;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.birthDay = birthDay;
+        this.role = role;
+        this.addressProjection = addressProjection;
+    }
+
     public int getId() {
         return id;
     }
@@ -86,5 +104,13 @@ public class UserProjection {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public AddressProjection getAddressProjection() {
+        return addressProjection;
+    }
+
+    public void setAddressProjection(AddressProjection addressProjection) {
+        this.addressProjection = addressProjection;
     }
 }
