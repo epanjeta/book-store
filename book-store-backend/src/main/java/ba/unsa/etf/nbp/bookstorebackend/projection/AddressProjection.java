@@ -43,6 +43,7 @@ public class AddressProjection {
         this.zipCode = zipCode;
     }
 
+    @Nullable
     public Integer getCityId() {
         return cityId;
     }
@@ -51,6 +52,7 @@ public class AddressProjection {
         this.cityId = cityId;
     }
 
+    @Nullable
     public Integer getCountryId() {
         return countryId;
     }

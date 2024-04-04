@@ -34,6 +34,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setAddressId(resultSet_.getInt(AddressFields.ID));
         } catch (SQLException e) {
+            addressProjection_.setAddressId(-1);
             LOGGER.warn(String.format(WARNING_MESSAGE, AddressFields.ID));
         }
 
@@ -44,6 +45,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setStreet(resultSet_.getString(AddressFields.STREET));
         } catch (SQLException e) {
+            addressProjection_.setStreet(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, AddressFields.STREET));
         }
 
@@ -54,6 +56,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setZipCode(resultSet_.getString(AddressFields.ZIP_CODE));
         } catch (SQLException e) {
+            addressProjection_.setZipCode(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, AddressFields.ZIP_CODE));
         }
 
@@ -64,6 +67,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setCityId(resultSet_.getInt(CityFields.ID));
         } catch (SQLException e) {
+            addressProjection_.setCityId(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, CityFields.ID));
         }
 
@@ -74,6 +78,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setCityName(resultSet_.getString(CityFields.NAME));
         } catch (SQLException e) {
+            addressProjection_.setCityName(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, CityFields.NAME));
         }
 
@@ -84,6 +89,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setCountryId(resultSet_.getInt(CountryFields.ID));
         } catch (SQLException e) {
+            addressProjection_.setCountryId(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, CountryFields.ID));
         }
 
@@ -94,6 +100,7 @@ public class AddressProjectionBuilder {
         try {
             addressProjection_.setCountryName(resultSet_.getString(CountryFields.NAME));
         } catch (SQLException e) {
+            addressProjection_.setCountryName(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, CountryFields.NAME));
         }
 

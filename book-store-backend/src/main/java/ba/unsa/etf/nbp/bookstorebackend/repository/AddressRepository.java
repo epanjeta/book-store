@@ -20,7 +20,7 @@ import java.util.List;
 
 @Repository
 public class AddressRepository {
-    private static Logger LOGGER = LoggerFactory.getLogger(UserRepository.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(AddressRepository.class);
     @Autowired
     protected DatabaseService databaseService;
 

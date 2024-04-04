@@ -35,6 +35,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setId(resultSet_.getInt(UserFields.ID));
         } catch (SQLException e) {
+            userProjection_.setId(-1);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.ID));
         }
 
@@ -45,6 +46,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setFirstName(resultSet_.getString(UserFields.FIRST_NAME));
         } catch (SQLException e) {
+            userProjection_.setFirstName(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.FIRST_NAME));
         }
 
@@ -55,6 +57,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setLastName(resultSet_.getString(UserFields.LAST_NAME));
         } catch (SQLException e) {
+            userProjection_.setLastName(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.LAST_NAME));
         }
 
@@ -65,6 +68,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setEmail(resultSet_.getString(UserFields.EMAIL));
         } catch (SQLException e) {
+            userProjection_.setEmail(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.EMAIL));
         }
 
@@ -75,6 +79,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setUserName(resultSet_.getString(UserFields.USERNAME));
         } catch (SQLException e) {
+            userProjection_.setUserName(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.USERNAME));
         }
 
@@ -86,6 +91,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setPassword(resultSet_.getString(UserFields.PASSWORD));
         } catch (SQLException e) {
+            userProjection_.setPassword(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.PASSWORD));
         }
 
@@ -96,6 +102,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setPhoneNumber(resultSet_.getString(UserFields.PHONE_NUMBER));
         } catch (SQLException e) {
+            userProjection_.setPhoneNumber(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.PHONE_NUMBER));
         }
 
@@ -106,6 +113,7 @@ public class UserProjectionBuilder {
         try {
             userProjection_.setBirthDay(resultSet_.getObject(UserFields.BIRTH_DATE, LocalDate.class));
         } catch (SQLException e) {
+            userProjection_.setBirthDay(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, UserFields.BIRTH_DATE));
         }
 

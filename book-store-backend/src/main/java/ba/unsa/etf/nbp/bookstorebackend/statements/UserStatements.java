@@ -48,7 +48,7 @@ public class UserStatements {
                     "       ADDS.STREET as " + AddressFields.STREET + ",\n" +
                     "       ADDS.ZIP_CODE as " + AddressFields.ZIP_CODE + ",\n" +
                     "       CITY.NAME as " + CityFields.NAME + ",\n" +
-                    "       COUNTRY.NAME as " + CountryFields.NAME + ",\n" +
+                    "       COUNTRY.NAME as " + CountryFields.NAME + "\n" +
                     "FROM NBP.NBP_USER usr\n" +
                     "         INNER JOIN NBP.NBP_ROLE rle ON usr.ROLE_ID = rle.ID\n" +
                     "         LEFT JOIN NBP24T3.NBP_ADDRESS ADDS ON ADDS.ID = usr.ID\n" +
