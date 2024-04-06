@@ -17,5 +17,7 @@ public class UserFields {
     public static final String BIRTH_DATE = "BIRTH_DATE";
     public static final String ADDRESS_ID = "ADDRESS_ID";
     public static final String ROLE_ID = "ROLE_ID";
+    public static final String NEXT_VAL = "NBP.NBP_USER_ID_SEQ.nextval";
+    public static final String CURR_VAL = "NBP.NBP_USER_ID_SEQ.currval";
 
 }
