@@ -8,8 +8,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class BookStoreBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BookStoreBackendApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BookStoreBackendApplication.class, args);
+    }
 
 }

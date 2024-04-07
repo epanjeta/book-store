@@ -16,6 +16,11 @@ public class UserProjection {
     private LocalDate birthDay;
     private Role role;
 
+    private AddressProjection addressProjection;
+
+    public UserProjection() {
+    }
+
     public int getId() {
         return id;
     }
@@ -86,5 +91,13 @@ public class UserProjection {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public AddressProjection getAddressProjection() {
+        return addressProjection;
+    }
+
+    public void setAddressProjection(AddressProjection addressProjection) {
+        this.addressProjection = addressProjection;
     }
 }
