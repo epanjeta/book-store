@@ -4,9 +4,11 @@ import ba.unsa.etf.nbp.bookstorebackend.constants.BookFields;
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.AuthorMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.BookMapper;
+import ba.unsa.etf.nbp.bookstorebackend.mapper.CartItemMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.PublisherMapper;
 import ba.unsa.etf.nbp.bookstorebackend.projection.AuthorProjection;
 import ba.unsa.etf.nbp.bookstorebackend.projection.BookProjection;
+import ba.unsa.etf.nbp.bookstorebackend.projection.CartItem;
 import ba.unsa.etf.nbp.bookstorebackend.projection.PublisherProjection;
 import ba.unsa.etf.nbp.bookstorebackend.statements.BookStatements;
 import ba.unsa.etf.nbp.bookstorebackend.statements.PublisherStatements;
@@ -57,5 +59,34 @@ public class BookRepository {
             throw new RuntimeException(e);
         }
         return bookProjections;
+    }
+    public List<CartItem> findAllBooksForOrder(int orderId) {
+        Connection connection = databaseService.getConnection();
+        ResultSet rs = BookStatements.findAllBooksForOrder(connection, orderId);
+        if (rs == null) {
+            return new ArrayList<>();
+        }
+
+        List<CartItem> cartItems = new ArrayList<>();
+        try {
+            Map<Long, CartItem> cartMap = new HashMap<>();
+            while (rs.next()) {
+                int bookId = rs.getInt(BookFields.ID);
+                int quantity = rs.getInt("quantity");
+                CartItem bp = cartMap.get(bookId);
+                if (bp == null) {
+                    cartMap.put(Long.valueOf(bookId), CartItemMapper.createCartItemFromResultSet(rs));
+                } else {
+                    AuthorProjection ap = AuthorMapper.createAuthorFromResultSet(rs);
+                    bp.getBook().getAuthors().add(ap);
+                    String genre = rs.getString(BookFields.GENRE);
+                    bp.getBook().getGenres().add(genre);
+                }
+            }
+            cartItems.addAll(cartMap.values());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return cartItems;
     }
 }
