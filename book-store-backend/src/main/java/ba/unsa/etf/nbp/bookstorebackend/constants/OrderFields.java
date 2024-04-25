@@ -1,8 +1,8 @@
 package ba.unsa.etf.nbp.bookstorebackend.constants;
 
 public class OrderFields {
-    public static final String NEXT_VAL = "NBP24T3.NBP_BOOK_SEQ.nextval";
-    public static final String CURR_VAL = "NBP24T3.NBP_BOOK_SEQ.currval";
+    public static final String NEXT_VAL = "NBP24T3.NBP_ORDER_SEQ.nextval";
+    public static final String CURR_VAL = "NBP24T3.NBP_ORDER_SEQ.currval";
     public static final String ALIAS = "ordr";
     public static final String ID = "ORDER_ID";
     public static final String CREATED_AT = "CREATED_AT";

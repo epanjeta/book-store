@@ -65,4 +65,22 @@ public class UserStatements {
 
     }
 
+    public static ResultSet findUserWithId(Connection connection, int userId){
+        try{
+            String sql = "SELECT usr.ID   as " + UserFields.ID + ",\n" +
+                    "       usr.FIRST_NAME as " + UserFields.FIRST_NAME + ",\n" +
+                    "       usr.LAST_NAME as " + UserFields.LAST_NAME + "\n" +
+                    "FROM NBP.NBP_USER usr\n" +
+                    "WHERE usr.ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+            return preparedStatement.executeQuery();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
 }

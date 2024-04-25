@@ -46,4 +46,18 @@ public class CartItemStatements {
             throw new RuntimeException(e);
         }
     }
+
+    public static int addToCart(Connection connection, int userId, int bookId, int quantity) {
+
+        try {
+            String insertSql = "INSERT INTO NBP24T3.NBP_CART (BOOK_ID, USER_ID, QUANTITY) VALUES (?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.setInt(3, quantity);
+            return preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

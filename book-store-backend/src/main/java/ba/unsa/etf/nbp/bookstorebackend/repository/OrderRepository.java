@@ -3,6 +3,7 @@ package ba.unsa.etf.nbp.bookstorebackend.repository;
 import ba.unsa.etf.nbp.bookstorebackend.Role;
 import ba.unsa.etf.nbp.bookstorebackend.constants.BookFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.OrderFields;
+import ba.unsa.etf.nbp.bookstorebackend.constants.OrderForm;
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.AuthorMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.CartItemMapper;
@@ -89,5 +90,31 @@ public class OrderRepository {
             throw new RuntimeException(e);
         }
         return cartItems;
+    }
+
+    public int createOrderForUser(OrderForm orderForm){
+        Connection connection = databaseService.getConnection();
+        ResultSet user = UserStatements.findUserWithId(connection, orderForm.getUserId());
+        if(user ==null){
+            throw new RuntimeException("User eith given id doen't exist");
+        }
+        try{
+            int createdOrderId = OrderStatements.createNewOrder(connection, orderForm);
+            for(Integer bookId: orderForm.getBookQuantity().keySet()){
+                ResultSet book = BookStatements.findBookWithId(connection, bookId);
+                if(book == null){
+                    throw new RuntimeException("Book with given id doesnt exist");
+                }
+                if(orderForm.getBookQuantity().get(bookId) <= 0){
+                    throw new RuntimeException("Quantity can't be zero or less");
+                }
+            }
+            int rowsAffected = OrderStatements.createBookToOrder(connection,createdOrderId, orderForm.getBookQuantity());
+            return rowsAffected;
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
     }
 }

@@ -81,4 +81,22 @@ public class BookStatements  {
             return null;
         }
     }
+
+    public static ResultSet findBookWithId(Connection connection, int bookId){
+
+        try{
+            String sql =
+                "SELECT b.ID         AS " + BookFields.ID + ",\n" +
+                        "       b.TITLE  AS " + BookFields.TITLE + "\n" +
+                        "FROM NBP24T3.NBP_BOOK b\n" +
+                        "WHERE b.ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, bookId);
+            return preparedStatement.executeQuery();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
