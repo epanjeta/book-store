@@ -60,14 +60,43 @@ public class AuthorRepository {
                 authorProjection.setNationalityId(nationalityId);
             }
 
+            
             int authorId = AuthorStatements.createAuthor(
                     databaseService.getConnection(),
                     authorProjection.getFirstName(),
                     authorProjection.getLastName(),
                     authorProjection.getBirthDay().toString(),
-                    authorProjection.getDeathDay().toString() ,
+                    authorProjection.getDeathDay() != null ? authorProjection.getDeathDay().toString() : null,
                     authorProjection.getNationalityId(),
                     authorProjection.getBio());
+            authorProjection.setId(authorId);
+            databaseService.getConnection().commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return authorProjection;
+    }
+
+    public AuthorProjection updateAuthor(AuthorProjection authorProjection) {
+        try {
+            if (authorProjection.getNationalityId() == null) {
+                int nationalityId = AuthorStatements.createNationality(
+                        databaseService.getConnection(),
+                        authorProjection.getNationalityName());
+                authorProjection.setNationalityId(nationalityId);
+            }
+
+
+            int authorId = AuthorStatements.updateAuthor(
+                    databaseService.getConnection(),
+                    authorProjection.getFirstName(),
+                    authorProjection.getLastName(),
+                    authorProjection.getBirthDay().toString(),
+                    authorProjection.getDeathDay() != null ? authorProjection.getDeathDay().toString() : null,
+                    authorProjection.getNationalityId(),
+                    authorProjection.getBio(),
+                    authorProjection.getId());
             authorProjection.setId(authorId);
             databaseService.getConnection().commit();
         } catch (SQLException e) {

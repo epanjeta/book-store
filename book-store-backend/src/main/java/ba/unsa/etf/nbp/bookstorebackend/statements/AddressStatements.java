@@ -105,4 +105,21 @@ public class AddressStatements {
         }
     }
 
+    public static int updateAddress(Connection connection, String street, String zipCode, Integer cityId, Integer id) {
+        String sql = "UPDATE NBP24T3.NBP_ADDRESS SET STREET = ?, ZIP_CODE = ?, CITY_ID = ? \n" +
+                "WHERE ID = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, street);
+            preparedStatement.setString(2, zipCode);
+            preparedStatement.setInt(3, cityId);
+            preparedStatement.setInt(4, id);
+            preparedStatement.executeUpdate();
+
+            return id;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -7,4 +7,5 @@ public class PublisherFields {
     public static final String NAME = "PUBLISHER_NAME";
     public static final String PHONE = "PUBLISHER_PHONE";
     public static final String EMAIL = "PUBLISHER_EMAIL";
+    public static final String ADDRESS_ID = "ADDRESS_ID";
 }
