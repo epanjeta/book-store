@@ -1,10 +1,11 @@
 package ba.unsa.etf.nbp.bookstorebackend.statements;
 
 import ba.unsa.etf.nbp.bookstorebackend.constants.*;
+import ba.unsa.etf.nbp.bookstorebackend.projection.AuthorProjection;
+import ba.unsa.etf.nbp.bookstorebackend.projection.BookProjection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.util.List;
 
 public class BookStatements  {
     public BookStatements() {
@@ -97,6 +98,70 @@ public class BookStatements  {
         catch (Exception e){
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static int createNewBook(Connection connection, BookProjection book) {
+        try{
+
+            //for(String genre : book.getGenres())
+                String sql = "INSERT INTO NBP24T3.NBP_BOOK (ISBN, TITLE, LANGUAGE_CODE, DESCRIPTION, PUBLICATION_DATE, PRICE, IMAGE_ID, STOCK, PUBLISHERID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, book.getISBN());
+                preparedStatement.setString(2, book.getTitle());
+                preparedStatement.setString(3, book.getLanguageCode());
+                preparedStatement.setString(4, book.getDescription());
+                preparedStatement.setDate(5, new Date(book.getPublicationDate().getYear(), book.getPublicationDate().getMonthValue(), book.getPublicationDate().getDayOfMonth()));
+                preparedStatement.setDouble(6, book.getPrice());
+                preparedStatement.setInt(7, book.getImageProjection().getId());
+                preparedStatement.setDouble(8, book.getStock());
+                preparedStatement.setInt(9, book.getPublisherProjection().getId());
+
+                int rowsAffected = preparedStatement.executeUpdate();
+
+            return CommonStatements.getCurrval(connection, BookFields.CURR_VAL);
+
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int fillBook2Author(Connection connection, List<AuthorProjection> authors, int bookId) {
+        try{
+            int rowsAffected = 0;
+            for(AuthorProjection author : authors){
+                String sql = "INSERT INTO NBP24T3.NBP_BOOK2AUTHOR(AUTHOR_ID, BOOK_ID) VALUES(?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, author.getId());
+                preparedStatement.setInt(2, bookId);
+                rowsAffected += preparedStatement.executeUpdate();
+
+            }
+            return rowsAffected;
+
+        }
+        catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int fillBook2Genre(Connection connection, List<String> genres, int bookId) {
+        try{
+            int rowsAffected = 0;
+            for(String genre: genres){
+                String sql = "INSERT INTO NBP24T3.NBP_BOOK2GENRE(GENRE, BOOK_ID) VALUES(?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, genre);
+                preparedStatement.setInt(2, bookId);
+                rowsAffected += preparedStatement.executeUpdate();
+
+            }
+           return rowsAffected;
+
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
         }
     }
 }

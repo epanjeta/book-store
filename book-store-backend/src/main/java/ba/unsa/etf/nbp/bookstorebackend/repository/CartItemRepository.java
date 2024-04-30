@@ -1,21 +1,17 @@
 package ba.unsa.etf.nbp.bookstorebackend.repository;
 
 import ba.unsa.etf.nbp.bookstorebackend.constants.BookFields;
+import ba.unsa.etf.nbp.bookstorebackend.constants.CartItemForm;
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
-import ba.unsa.etf.nbp.bookstorebackend.mapper.AuthorMapper;
-import ba.unsa.etf.nbp.bookstorebackend.mapper.BookMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.CartItemMapper;
-import ba.unsa.etf.nbp.bookstorebackend.projection.AuthorProjection;
-import ba.unsa.etf.nbp.bookstorebackend.projection.BookProjection;
 import ba.unsa.etf.nbp.bookstorebackend.projection.CartItem;
-import ba.unsa.etf.nbp.bookstorebackend.projection.OrderProjection;
 import ba.unsa.etf.nbp.bookstorebackend.statements.BookStatements;
 import ba.unsa.etf.nbp.bookstorebackend.statements.CartItemStatements;
 import ba.unsa.etf.nbp.bookstorebackend.statements.UserStatements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -66,12 +62,12 @@ public class CartItemRepository {
 
     public int addToCart(int userId, int bookId, int quantity){
         Connection connection = databaseService.getConnection();
-        ResultSet user = UserStatements.findUserWithId(connection, userId);
-        if(user == null){
+
+        if(!doesUserExist(connection, userId)){
             throw new RuntimeException("User with given id doesn't exist");
         }
-        ResultSet book = BookStatements.findBookWithId(connection, bookId);
-        if(book == null){
+
+        if(!doesBookExist(connection, bookId)){
             throw new RuntimeException("Book with given id doesn't exist");
         }
         if(quantity <= 0){
@@ -82,5 +78,41 @@ public class CartItemRepository {
             throw new RuntimeException("Zero rows affected");
         }
         else return rowsAffected;
+    }
+
+    public HttpStatus deleteFromCart(CartItemForm cartItemForm){
+        Connection connection = databaseService.getConnection();
+        if(!doesUserExist(connection, cartItemForm.getUserId())){
+            throw new RuntimeException("User with given id does not exist!");
+        }
+        if(!doesBookExist(connection, cartItemForm.getBookId())){
+            throw new RuntimeException("Book with given id doesn't exist");
+        }
+        int rowsAffected = 0;
+        try {
+            rowsAffected = CartItemStatements.deleteFromCart(connection, cartItemForm.getUserId(), cartItemForm.getBookId());
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+       return HttpStatus.OK;
+
+    }
+
+    private boolean doesUserExist(Connection connection, int userId){
+        ResultSet user = UserStatements.findUserWithId(connection, userId);
+        if(user == null){
+            return false;
+        }
+        return true;
+    }
+
+    private boolean doesBookExist(Connection connection, int bookId){
+        ResultSet book = BookStatements.findBookWithId(connection, bookId);
+        if(book == null){
+           return false;
+        }
+        return true;
     }
 }

@@ -4,6 +4,7 @@ import ba.unsa.etf.nbp.bookstorebackend.constants.CartItemForm;
 import ba.unsa.etf.nbp.bookstorebackend.projection.CartItem;
 import ba.unsa.etf.nbp.bookstorebackend.repository.CartItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,5 +25,10 @@ public class CartItemController {
     public @ResponseBody int addToCart(@RequestBody CartItemForm cartItemForm){
         return cartItemRepository.addToCart(cartItemForm.getUserId(), cartItemForm.getBookId(), cartItemForm.getQuantity());
 
+    }
+
+    @DeleteMapping("/deleteFromCart")
+    public @ResponseBody HttpStatus deleteFromCart(@RequestBody CartItemForm cartItemForm){
+        return cartItemRepository.deleteFromCart(cartItemForm);
     }
 }

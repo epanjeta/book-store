@@ -60,4 +60,17 @@ public class CartItemStatements {
             throw new RuntimeException(e);
         }
     }
+
+    public static int deleteFromCart(Connection connection, int userId, int bookId){
+        try{
+            String sql = "DELETE FROM NBP24T3.NBP_CART WHERE BOOK_ID = ? AND USER_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.setInt(2, userId);
+            return preparedStatement.executeUpdate();
+        }
+        catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
 }

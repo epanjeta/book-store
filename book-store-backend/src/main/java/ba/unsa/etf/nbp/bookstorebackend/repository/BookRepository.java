@@ -5,16 +5,14 @@ import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.AuthorMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.BookMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.CartItemMapper;
-import ba.unsa.etf.nbp.bookstorebackend.mapper.PublisherMapper;
 import ba.unsa.etf.nbp.bookstorebackend.projection.AuthorProjection;
 import ba.unsa.etf.nbp.bookstorebackend.projection.BookProjection;
 import ba.unsa.etf.nbp.bookstorebackend.projection.CartItem;
-import ba.unsa.etf.nbp.bookstorebackend.projection.PublisherProjection;
 import ba.unsa.etf.nbp.bookstorebackend.statements.BookStatements;
-import ba.unsa.etf.nbp.bookstorebackend.statements.PublisherStatements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
@@ -88,5 +86,19 @@ public class BookRepository {
             throw new RuntimeException(e);
         }
         return cartItems;
+    }
+
+    public HttpStatus createNewBook(BookProjection bookForm) {
+        Connection connection = databaseService.getConnection();
+        int createdBookId =  BookStatements.createNewBook(connection, bookForm);
+        int rowsAffectedAuthors = BookStatements.fillBook2Author(connection, bookForm.getAuthors(), createdBookId);
+        if(rowsAffectedAuthors != bookForm.getAuthors().size()){
+            throw new RuntimeException("Authors aren't written in database");
+        }
+        int rowsAffectedGenres = BookStatements.fillBook2Genre(connection, bookForm.getGenres(), createdBookId);
+        if(rowsAffectedGenres != bookForm.getGenres().size()){
+            throw new RuntimeException("Genres aren't written in database");
+        }
+        return HttpStatus.OK;
     }
 }
