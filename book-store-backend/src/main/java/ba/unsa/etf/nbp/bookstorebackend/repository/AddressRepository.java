@@ -94,4 +94,39 @@ public class AddressRepository {
 
         return addressProjection;
     }
+
+    public AddressProjection updateAddress(AddressProjection addressProjection) {
+        try {
+            if (addressProjection.getCountryId() == null) {
+                int countryId = AddressStatements.createCountry(
+                        databaseService.getConnection(),
+                        addressProjection.getCountryName());
+                addressProjection.setCountryId(countryId);
+                int cityId = AddressStatements.createCity(
+                        databaseService.getConnection(),
+                        addressProjection.getCityName(),
+                        countryId);
+                addressProjection.setCityId(cityId);
+            } else if (addressProjection.getCityId() == null) {
+                int cityId = AddressStatements.createCity(
+                        databaseService.getConnection(),
+                        addressProjection.getCityName(),
+                        addressProjection.getCountryId());
+                addressProjection.setCityId(cityId);
+            }
+
+            int addressId = AddressStatements.updateAddress(
+                    databaseService.getConnection(),
+                    addressProjection.getStreet(),
+                    addressProjection.getZipCode(),
+                    addressProjection.getCityId(),
+                    addressProjection.getAddressId());
+            addressProjection.setAddressId(addressId);
+            databaseService.getConnection().commit();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return addressProjection;
+    }
 }

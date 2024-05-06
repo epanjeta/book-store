@@ -35,4 +35,11 @@ public class AuthorController {
             (@RequestBody AuthorProjection author) {
         return authorRepository.createAuthor(author);
     }
+
+    @PostMapping("update")
+    @ResponseStatus(HttpStatus.OK)
+    public  @ResponseBody AuthorProjection updateAuthor
+            (@RequestBody AuthorProjection author) {
+        return authorRepository.updateAuthor(author);
+    }
 }

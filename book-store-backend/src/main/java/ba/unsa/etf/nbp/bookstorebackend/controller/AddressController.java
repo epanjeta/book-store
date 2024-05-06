@@ -40,5 +40,12 @@ public class AddressController {
         return addressRepository.createAddress(address);
     }
 
+    @PostMapping("update")
+    @ResponseStatus(HttpStatus.OK)
+    public  @ResponseBody AddressProjection updateAddress
+            (@RequestBody AddressProjection address) {
+        return addressRepository.updateAddress(address);
+    }
+
 
 }

@@ -5,6 +5,7 @@ import ba.unsa.etf.nbp.bookstorebackend.constants.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 
 public class AuthorStatements {
     public AuthorStatements() {
@@ -60,19 +61,51 @@ public class AuthorStatements {
     }
 
     public static int createAuthor(Connection connection, String first_name, String last_name, String birth_date, String death_date, Integer nationalityId, String bio) {
-        String sql = "INSERT INTO NBP24T3.NBP_ADDRESS(FIRST_NAME, LAST_NAME, BIRTH_DATE, DEATH_DATE, NATIONALITY_ID, BIO)\n" +
+        String sql = "INSERT INTO NBP24T3.NBP_AUTHOR(FIRST_NAME, LAST_NAME, BIRTH_DATE, DEATH_DATE, NATIONALITY_ID, BIO)\n" +
                 "VALUES (?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, first_name);
             preparedStatement.setString(2, last_name);
-            preparedStatement.setString(3, birth_date);
-            preparedStatement.setString(4, death_date);
+            preparedStatement.setDate(3, java.sql.Date.valueOf(birth_date));
+            if(death_date != null)
+                preparedStatement.setDate(4, java.sql.Date.valueOf(death_date));
+            else
+                preparedStatement.setNull(4, Types.DATE);
             preparedStatement.setInt(5, nationalityId);
             preparedStatement.setString(6, bio);
             preparedStatement.executeUpdate();
 
             return CommonStatements.getCurrval(connection, AuthorFields.CURR_VAL);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int updateAuthor(Connection connection, String first_name, String last_name, String birth_date, String death_date, Integer nationalityId, String bio, Integer id) {
+        String sql = "UPDATE NBP24T3.NBP_AUTHOR " +
+                "SET FIRST_NAME = ?, " +
+                "    LAST_NAME = ?, " +
+                "    BIRTH_DATE = ?, " +
+                "    DEATH_DATE = ?, " +
+                "    BIO = ?, " +
+                "    NATIONALITY_ID = ? " +
+                "WHERE ID = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, first_name);
+            preparedStatement.setString(2, last_name);
+            preparedStatement.setDate(3, java.sql.Date.valueOf(birth_date));
+            if(death_date != null)
+                preparedStatement.setDate(4, java.sql.Date.valueOf(death_date));
+            else
+                preparedStatement.setNull(4, Types.DATE);
+            preparedStatement.setString(5, bio);
+            preparedStatement.setInt(6, nationalityId);
+            preparedStatement.setInt(7, id);
+            preparedStatement.executeUpdate();
+
+            return id;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

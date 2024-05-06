@@ -17,7 +17,7 @@ public class AddressProjection {
     }
 
     @Nullable
-    public int getAddressId() {
+    public Integer getAddressId() {
         return addressId;
     }
 
