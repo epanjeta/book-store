@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getBooks } from 'src/api/books';
+import { getBooks } from 'api/books';
 import { Card, Image, Button, Divider } from 'semantic-ui-react';
-import placeholder from 'src/images/placeholder.png';
+import placeholder from 'images/placeholder.png';
 import styled from 'styled-components';
 
 const Container = styled.div`
