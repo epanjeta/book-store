@@ -8,6 +8,7 @@ import AdminNav from 'components/AdminNav';
 import CustomerNav from 'components/CustomerNav';
 import Books from './Books/Books';
 import Cart from './Carts/Cart';
+import BookDetails from './Books/BookDetails';
 
 const Root = () => {
 
@@ -42,6 +43,7 @@ const Root = () => {
             <Route path="/*" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/books" element={<Books />} />
+            <Route path="/books/details/" element={<BookDetails />} />
             <Route path="/cart" element={<Cart />} />
           </Routes>
         </div>
