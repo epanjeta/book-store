@@ -4,11 +4,12 @@ import React from 'react';
 
 
 const App = () => {
-  return (
-    <StoreProvider>
-      <Root/>
-    </StoreProvider>
-  );
+    return (
+        <StoreProvider>
+            <Root/>
+        </StoreProvider>
+    );
 }
 
 export default App;
+

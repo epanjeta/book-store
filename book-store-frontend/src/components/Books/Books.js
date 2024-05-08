@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getBooks } from 'api/books';
-import { Card, Image, Button, Divider } from 'semantic-ui-react';
+import { Card, Image, Divider } from 'semantic-ui-react';
 import placeholder from 'images/placeholder.png';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   padding: 4rem;
@@ -19,6 +20,7 @@ const BookCard = styled(Card)`
 `;
 
 const Books = () => {
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
@@ -34,12 +36,12 @@ const Books = () => {
   }, []);
 
   return (
-    <Container>
+    <Container > 
       <Header>Books</Header>
       <Divider/>
       <Card.Group>
         {books.map((book, index) => (
-          <BookCard key={index}>
+          <BookCard key={index} onClick={() => navigate('/books/details/', { state: book })}>
             <Image src={placeholder} wrapped ui={false} />
             <Card.Content>
               <Card.Header>{book.title}</Card.Header>
@@ -47,7 +49,7 @@ const Books = () => {
               <Card.Description>{book.description}</Card.Description>
             </Card.Content>
             <Card.Content extra>
-            <Card.Header>{`${book.price} KM`}</Card.Header>
+            <Card.Header>{`${book.price} $`}</Card.Header>
             </Card.Content>
           </BookCard>
         ))}
