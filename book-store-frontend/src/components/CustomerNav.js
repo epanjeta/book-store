@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Menu, Icon } from 'semantic-ui-react';
 import { useNavigate } from "react-router-dom";
 
-const Nav = () => {
+const CustomerNav = () => {
     const [state, setState] = useState({ activeItem: "" });
     const navigate = useNavigate();
 
@@ -24,4 +24,4 @@ const Nav = () => {
     );
 };
 
-export default Nav;
+export default CustomerNav;
