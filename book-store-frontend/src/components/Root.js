@@ -7,6 +7,7 @@ import { getSession } from 'api/users';
 import AdminNav from 'components/AdminNav';
 import CustomerNav from 'components/CustomerNav';
 import Books from './Books/Books';
+import Cart from './Carts/Cart';
 
 const Root = () => {
 
@@ -41,6 +42,7 @@ const Root = () => {
             <Route path="/*" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/books" element={<Books />} />
+            <Route path="/cart" element={<Cart />} />
           </Routes>
         </div>
       </Router>
