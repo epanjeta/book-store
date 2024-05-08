@@ -4,6 +4,7 @@ import { Button, Image } from 'semantic-ui-react';
 import styled from 'styled-components';
 import placeholder from 'images/placeholder.png';
 import NumberInput from 'semantic-ui-react-numberinput';
+import { addItemToCart } from 'api/carts';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -62,7 +63,21 @@ const WrapperDiv = styled.div`
 const BookDetails = () => {
   const location = useLocation();
   const [book, setBook] = useState(location.state);
-  const [quantity, setQuantity] = useState('0');
+  const [quantity, setQuantity] = useState('1');
+
+  const addToCart = async () => {
+    try {
+        const data = {
+          "userId": 11,
+          "bookId": book.id,
+          "quantity": parseInt(quantity)
+        }
+        console.log(typeof(data.quantity));
+        await addItemToCart(data);
+    } catch (err) {
+        console.error('Unable to add to cart', err);
+    } 
+  };
 
   const changeValue = (newValue) => {
     setQuantity(newValue);
@@ -85,8 +100,13 @@ const BookDetails = () => {
                     <TextContainer><h4><SpanCustomWeight weight="700">Language: </SpanCustomWeight>{book.languageCode}</h4></TextContainer>
                     <FlexContainer>
                       <TextContainer><h5>Quantity:</h5></TextContainer>
-                      <NumberInput size='mini' minValue={0} maxValue={book.stock} value={quantity} onChange={changeValue} />
-                      <Button size = 'mini' color='orange' style={{ marginLeft: '1rem' }}>Add to cart</Button>
+                      <NumberInput size='mini' minValue={1} maxValue={book.stock} value={quantity} onChange={changeValue} />
+                      <Button 
+                        size = 'mini'
+                        color='orange' 
+                        style={{ marginLeft: '1rem' }}
+                        onClick={addToCart}
+                      >Add to cart</Button>
                     </FlexContainer>
               </StyledContainerRight>
           </StyledContainer>
