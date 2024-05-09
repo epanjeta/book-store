@@ -7,7 +7,11 @@ export const getSession = async () => {
   };
   
   export const login = async (data) => {
-    //const response = await API.post(`??????/login`, data);
-    //return response.data;
-    return {data: "OK"}
+    const response = await API.post("authentication/authenticate", data);
+    if(response.data.errorMessage == null || response.data.errorMessage === ""){
+      localStorage.setItem('CurrentUserId', response.data.id)
+      localStorage.setItem('CurrentUserRole', response.data.role)
+      localStorage.setItem('CurrentUserName', response.data.userName)
+    }
+    return response.data;
   };

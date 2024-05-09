@@ -21,13 +21,26 @@ const Login = () => {
     
     const handleSubmit = async (values) => {
       try {
-        const token = await login(values);
+        const loginResponse = await login(values)
+        console.log(loginResponse)
+        if(loginResponse.errorMessage == null || loginResponse.errorMessage === ""){
+          localStorage.setItem("Bearer", loginResponse.jwt);
+          if (loginResponse.jwt && loginResponse.jwt !== "" && loginResponse.jwt !== undefined) {
+            const response = await getSession();
+            setUser(response);
+            navigate("/books");
+          }
+        }
+        else{
+          alert(loginResponse.errorMessage);
+        }
+        /*const token = await login(values);
         localStorage.setItem("Bearer", token);
         if (token && token !== "" && token !== undefined) {
           const response = await getSession();
           setUser(response);
           navigate("/books");
-        }
+        }*/
       } catch (err) {
         console.log("Error")
       }
