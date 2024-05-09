@@ -39,7 +39,7 @@ const Books = () => {
     <Container > 
       <Header>Books</Header>
       <Divider/>
-      <Card.Group>
+      <Card.Group itemsPerRow={5}>
         {books.map((book, index) => (
           <BookCard key={index} onClick={() => navigate('/books/details/', { state: book })}>
             <Image src={placeholder} wrapped ui={false} />

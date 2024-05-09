@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Header, Container, Divider } from 'semantic-ui-react';
 import styled from 'styled-components';
 import placeholder from 'images/placeholder.png';
+import { useStore } from 'components/Login/StoreContext';
 
 const RemoveButton = styled(Button)`
   &&& {
@@ -20,10 +21,14 @@ const RemoveButton = styled(Button)`
 
 const InfoContainer = styled.div`
   margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-self: flex-end;
   flex: 1;
+  border: 1px solid #ddd; /* Set border color to light grey */
+  border-radius: 10px; /* Set border radius */
+  padding: 10px; /* Add padding */
 `;
 
 const GridContainer = styled.div`
@@ -33,11 +38,12 @@ const GridContainer = styled.div`
 
 const Cart = () => {
     const [cartDetails, setCartDetails] = useState([]);
+    const { user } = useStore();
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const params = {userId: 11}
+                const params = {userId: parseInt(user.userId)}
                 const response = await getCartDetails(params);
                 setCartDetails(response);
             } catch (error) {

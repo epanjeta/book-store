@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import "semantic-ui-css/semantic.min.css";
 import Login from 'components/Login/Login';
 import { useStore } from 'components/Login/StoreContext';
-import { getSession } from 'api/users';
+import { jwtDecode } from "jwt-decode";
 import AdminNav from 'components/AdminNav';
 import CustomerNav from 'components/CustomerNav';
 import Books from './Books/Books';
@@ -16,28 +18,36 @@ const Root = () => {
   const { user, setUser } = useStore();
 
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await getSession();
-        setUser(response);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setInitialized(true);
-      }
-    };
-
-    fetch();
-  }, [setUser]);
+    const token = localStorage.getItem('Bearer');
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setUser(decodedToken);
+    } else {
+      console.log("Not logged in!")
+    }
+    setInitialized(true);
+  }, [setUser, setInitialized]);
 
   if (!initialized) {
     return null;
   }
 
   return (
+    <div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Router>
-        {user?.role === "Admin" && <AdminNav />}
-        {user?.role === "Custmer" && <CustomerNav />}
+        {user?.role === "ADMIN" && <AdminNav />}
+        {user?.role === "BOOK_BUYER" && <CustomerNav />}
         <div>
           <Routes>
             <Route path="/*" element={<Login />} />
@@ -48,6 +58,7 @@ const Root = () => {
           </Routes>
         </div>
       </Router>
+    </div>
   );
 }
 

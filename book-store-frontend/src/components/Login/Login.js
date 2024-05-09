@@ -3,7 +3,8 @@ import { Form, Button, Message, Container, Grid, Segment } from 'semantic-ui-rea
 import { Formik } from 'formik';
 import { useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
-import { getSession, login } from 'api/users';
+import { toast } from "react-toastify"; 
+import { login } from 'api/users';
 import { useStore } from 'components/Login/StoreContext';
 
 const validationSchema = Yup.object({
@@ -22,27 +23,19 @@ const Login = () => {
     const handleSubmit = async (values) => {
       try {
         const loginResponse = await login(values)
-        console.log(loginResponse)
         if(loginResponse.errorMessage == null || loginResponse.errorMessage === ""){
           localStorage.setItem("Bearer", loginResponse.jwt);
           if (loginResponse.jwt && loginResponse.jwt !== "" && loginResponse.jwt !== undefined) {
-            const response = await getSession();
-            setUser(response);
+            setUser(loginResponse);
+            toast.success("Logged in!");
             navigate("/books");
           }
         }
         else{
           alert(loginResponse.errorMessage);
         }
-        /*const token = await login(values);
-        localStorage.setItem("Bearer", token);
-        if (token && token !== "" && token !== undefined) {
-          const response = await getSession();
-          setUser(response);
-          navigate("/books");
-        }*/
       } catch (err) {
-        console.log("Error")
+        toast.error("Unable to login!")
       }
     };
     return (

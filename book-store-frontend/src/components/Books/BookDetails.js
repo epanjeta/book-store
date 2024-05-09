@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import placeholder from 'images/placeholder.png';
 import NumberInput from 'semantic-ui-react-numberinput';
 import { addItemToCart } from 'api/carts';
+import { useStore } from 'components/Login/StoreContext';
+import { toast } from "react-toastify"; 
+import { useNavigate } from "react-router-dom";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -55,27 +58,30 @@ const WrapperDiv = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  width: 50%;
-  margin-right: auto;
-  margin-left: auto;
+  align-content: center;
 `;
 
 const BookDetails = () => {
   const location = useLocation();
   const [book, setBook] = useState(location.state);
   const [quantity, setQuantity] = useState('1');
+  const { user } = useStore();
+  const navigate = useNavigate();
 
   const addToCart = async () => {
     try {
         const data = {
-          "userId": 11,
+          "userId": parseInt(user.userId),
           "bookId": book.id,
           "quantity": parseInt(quantity)
         }
         console.log(typeof(data.quantity));
         await addItemToCart(data);
+        toast.success("Added to cart!");
+        navigate("/books");
     } catch (err) {
         console.error('Unable to add to cart', err);
+        toast.error("Unable to add to cart!")
     } 
   };
 
