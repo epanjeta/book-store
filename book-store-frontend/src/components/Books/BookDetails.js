@@ -1,13 +1,16 @@
-import React, { useState }from 'react';
-import { useLocation } from 'react-router-dom';
-import { Button, Image } from 'semantic-ui-react';
+import React, {useEffect, useState} from 'react';
+import {Button, Image} from 'semantic-ui-react';
 import styled from 'styled-components';
 import placeholder from 'images/placeholder.png';
 import NumberInput from 'semantic-ui-react-numberinput';
-import { addItemToCart } from 'api/carts';
-import { useStore } from 'components/Login/StoreContext';
-import { toast } from "react-toastify"; 
-import { useNavigate } from "react-router-dom";
+import {addItemToCart} from 'api/carts';
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
+import {getBook, getBooks} from "../../api/books";
+import { useParams } from "react-router-dom";
+import LoadingSpinner from "../loading/LoadingSpinner";
+import {useCookies} from "react-cookie";
+import {useStore} from "../Login/StoreContext";
 
 const StyledContainer = styled.div`
   display: flex;
@@ -62,66 +65,89 @@ const WrapperDiv = styled.div`
 `;
 
 const BookDetails = () => {
-  const location = useLocation();
-  const [book, setBook] = useState(location.state);
-  const [quantity, setQuantity] = useState('1');
-  const { user } = useStore();
-  const navigate = useNavigate();
+    const [book, setBook] = useState(null);
+    const params = useParams();
+    const [quantity, setQuantity] = useState('0');
+    const { user } = useStore();
+    const navigate = useNavigate();
 
-  const addToCart = async () => {
-    try {
-        const data = {
-          "userId": parseInt(user.userId),
-          "bookId": book.id,
-          "quantity": parseInt(quantity)
+    useEffect(() => {
+        const fetchBook = async () => {
+            try {
+                const response = await getBook(params.id);
+                setBook(response);
+            } catch (error) {
+                console.error('Error fetching books:', error);
+            }
+        };
+        fetchBook();
+    }, [])
+
+
+    const addToCart = async () => {
+        try {
+            const data = {
+                "userId": parseInt(user.userId),
+                "bookId": book.id,
+                "quantity": parseInt(quantity)
+            }
+            console.log(typeof (data.quantity));
+            await addItemToCart(data);
+            toast.success("Added to cart!");
+            navigate("/books");
+        } catch (err) {
+            console.error('Unable to add to cart', err);
+            toast.error("Unable to add to cart!")
         }
-        console.log(typeof(data.quantity));
-        await addItemToCart(data);
-        toast.success("Added to cart!");
-        navigate("/books");
-    } catch (err) {
-        console.error('Unable to add to cart', err);
-        toast.error("Unable to add to cart!")
-    } 
-  };
+    };
 
-  const changeValue = (newValue) => {
-    setQuantity(newValue);
-}
-  
+    const changeValue = (newValue) => {
+        setQuantity(newValue);
+    }
+
     return (
-        <WrapperDiv>
-          <StyledContainer>
-            <StyledContainerLeft>
-                <Image src={placeholder} />
-              </StyledContainerLeft>
-              <StyledContainerRight>
-                    <TextContainer><h2>{book.title}</h2> </TextContainer>
-                    <TextContainer><h3><SpanCustomWeight weight="700">Authors: </SpanCustomWeight>{book.authors.map(author => `${author.firstName} ${author.lastName}`).join(', ')}</h3></TextContainer>
+        <> {
+            book ? <WrapperDiv>
+                <StyledContainer>
+                    <StyledContainerLeft>
+                        <Image src={placeholder}/>
+                    </StyledContainerLeft>
+                    <StyledContainerRight>
+                        <TextContainer><h2>{book.title}</h2></TextContainer>
+                        <TextContainer><h3><SpanCustomWeight
+                            weight="700">Authors: </SpanCustomWeight>{book.authors.map(author => `${author.firstName} ${author.lastName}`).join(', ')}
+                        </h3></TextContainer>
 
-                    <TextBreak></TextBreak>
-                    <TextContainer><h4><SpanCustomWeight weight="700">Genres: </SpanCustomWeight>{book.genres.join(", ")}</h4></TextContainer>
-                    <TextContainer><h4><SpanCustomWeight weight="700">In Stock: </SpanCustomWeight>{book.stock}</h4></TextContainer>
-                    <TextContainer><h4><SpanCustomWeight weight="700">Price: </SpanCustomWeight>{`${book.price} $`}</h4></TextContainer>
-                    <TextContainer><h4><SpanCustomWeight weight="700">Language: </SpanCustomWeight>{book.languageCode}</h4></TextContainer>
-                    <FlexContainer>
-                      <TextContainer><h5>Quantity:</h5></TextContainer>
-                      <NumberInput size='mini' minValue={1} maxValue={book.stock} value={quantity} onChange={changeValue} />
-                      <Button 
-                        size = 'mini'
-                        color='orange' 
-                        style={{ marginLeft: '1rem' }}
-                        onClick={addToCart}
-                      >Add to cart</Button>
-                    </FlexContainer>
-              </StyledContainerRight>
-          </StyledContainer>
-          <DescriptionContainer>
-            <h3><SpanCustomWeight weight="700">Description: </SpanCustomWeight></h3>
-            <p>{book.description}</p>
-          </DescriptionContainer>
-        </WrapperDiv>
-      );
+                        <TextBreak></TextBreak>
+                        <TextContainer><h4><SpanCustomWeight
+                            weight="700">Genres: </SpanCustomWeight>{book.genres.join(", ")}</h4></TextContainer>
+                        <TextContainer><h4><SpanCustomWeight weight="700">In Stock: </SpanCustomWeight>{book.stock}</h4>
+                        </TextContainer>
+                        <TextContainer><h4><SpanCustomWeight weight="700">Price: </SpanCustomWeight>{`${book.price} $`}</h4>
+                        </TextContainer>
+                        <TextContainer><h4><SpanCustomWeight weight="700">Language: </SpanCustomWeight>{book.languageCode}
+                        </h4></TextContainer>
+                        <FlexContainer>
+                            <TextContainer><h5>Quantity:</h5></TextContainer>
+                            <NumberInput size='mini' minValue={0} maxValue={book.stock} value={quantity}
+                                         onChange={changeValue}/>
+                            <Button
+                                size='mini'
+                                color='orange'
+                                style={{marginLeft: '1rem'}}
+                                onClick={addToCart}
+                            >Add to cart</Button>
+                        </FlexContainer>
+                    </StyledContainerRight>
+                </StyledContainer>
+                <DescriptionContainer>
+                    <h3><SpanCustomWeight weight="700">Description: </SpanCustomWeight></h3>
+                    <p>{book.description}</p>
+                </DescriptionContainer>
+            </WrapperDiv> : <LoadingSpinner />
+        }
+        </>
+    );
 };
 
 export default BookDetails;

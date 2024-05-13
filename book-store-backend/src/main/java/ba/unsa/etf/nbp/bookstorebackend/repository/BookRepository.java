@@ -101,4 +101,21 @@ public class BookRepository {
         }
         return HttpStatus.OK;
     }
+
+    public BookProjection findBook(int id) {
+        Connection connection = databaseService.getConnection();
+        ResultSet rs = BookStatements.findBookWithIdAllInfo(connection, id);
+        if (rs == null) {
+            return null;
+        }
+
+        try {
+            if (rs.next()) {
+                return BookMapper.createBookFromResultSet(rs);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 }

@@ -15,7 +15,7 @@ const CustomerNav = () => {
     };
 
     const handleLogout = async (e, { name }) => {
-        localStorage.clear();
+        document.cookie = 'Bearer=; max-age=3600; path=/';
         setUser(null);
         navigate("/login");
     };

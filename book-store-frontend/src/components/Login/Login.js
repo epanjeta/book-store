@@ -24,7 +24,7 @@ const Login = () => {
       try {
         const loginResponse = await login(values)
         if(loginResponse.errorMessage == null || loginResponse.errorMessage === ""){
-          localStorage.setItem("Bearer", loginResponse.jwt);
+            document.cookie = 'Bearer=' + loginResponse.jwt + '; max-age=3600; path=/';
           if (loginResponse.jwt && loginResponse.jwt !== "" && loginResponse.jwt !== undefined) {
             setUser(loginResponse);
             toast.success("Logged in!");

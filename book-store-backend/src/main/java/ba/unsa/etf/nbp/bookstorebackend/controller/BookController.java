@@ -27,6 +27,11 @@ public class BookController {
         return bookRepository.findAllBooks();
     }
 
+    @GetMapping("/{id}")
+    public @ResponseBody BookProjection getBook(@PathVariable("id") int id) {
+        return bookRepository.findBook(id);
+    }
+
     @GetMapping("/booksForOrder")
     public @ResponseBody List<CartItem> getAllBookForOrder(@RequestParam int orderId) {
         return bookRepository.findAllBooksForOrder(orderId);
