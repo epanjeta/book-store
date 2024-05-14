@@ -11,6 +11,7 @@ import CustomerNav from 'components/CustomerNav';
 import Books from './Books/Books';
 import Cart from './Carts/Cart';
 import BookDetails from './Books/BookDetails';
+import Orders from "./Admin/Orders";
 
 const Root = () => {
 
@@ -18,7 +19,15 @@ const Root = () => {
   const { user, setUser } = useStore();
 
   useEffect(() => {
-    const token = localStorage.getItem('Bearer');
+    const cookies = document.cookie.split(';');
+    let token = null;
+    for (let i = 0; i < cookies.length; i++) {
+      if (cookies[i].startsWith('Bearer')) {
+        console.log(cookies[i])
+        token = cookies[i].split('=')[1];
+        break;
+      }
+    }
     if (token) {
       const decodedToken = jwtDecode(token);
       setUser(decodedToken);
@@ -46,7 +55,7 @@ const Root = () => {
         pauseOnHover
       />
       <Router>
-        {user?.role === "ADMIN" && <AdminNav />}
+        {user?.role === "ADMINISTRATOR" && <AdminNav />}
         {user?.role === "BOOK_BUYER" && <CustomerNav />}
         <div>
           <Routes>
@@ -55,6 +64,7 @@ const Root = () => {
             <Route path="/books" element={<Books />} />
             <Route path="/books/details/" element={<BookDetails />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/orders" element={<Orders />} />
           </Routes>
         </div>
       </Router>

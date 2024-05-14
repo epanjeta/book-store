@@ -15,7 +15,7 @@ const CustomerNav = () => {
     };
 
     const handleLogout = async (e, { name }) => {
-        document.cookie = 'Bearer=; max-age=3600; path=/';
+        document.cookie = 'Bearer=;';
         setUser(null);
         navigate("/login");
     };
@@ -28,6 +28,9 @@ const CustomerNav = () => {
             <Menu.Menu position='right'>
                 <Menu.Item name='cart' onClick={handleItemClick}>
                     <Icon name='shopping cart' size='large' color='grey' />
+                </Menu.Item>
+                <Menu.Item name='orders' onClick={handleItemClick}>
+                    <Icon name='list' size='large' color='grey' />
                 </Menu.Item>
                 <Menu.Item>
                 <Dropdown

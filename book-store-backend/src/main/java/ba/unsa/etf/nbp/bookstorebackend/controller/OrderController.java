@@ -1,6 +1,7 @@
 package ba.unsa.etf.nbp.bookstorebackend.controller;
 
 import ba.unsa.etf.nbp.bookstorebackend.constants.OrderForm;
+import ba.unsa.etf.nbp.bookstorebackend.constants.Status;
 import ba.unsa.etf.nbp.bookstorebackend.projection.OrderProjection;
 import ba.unsa.etf.nbp.bookstorebackend.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,10 @@ public class OrderController {
     @PostMapping("/createNewOrder")
     public @ResponseBody int createNewOrder(@RequestBody OrderForm orderFord){
         return orderRepository.createOrderForUser(orderFord);
+    }
+
+    @PutMapping("/update")
+    public @ResponseBody int updateOrder(@RequestBody OrderProjection orderProjection){
+        return orderRepository.updateOrder(orderProjection.getId(), orderProjection.getStatus());
     }
 }

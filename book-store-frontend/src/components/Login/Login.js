@@ -23,15 +23,17 @@ const Login = () => {
     const handleSubmit = async (values) => {
       try {
         const loginResponse = await login(values)
+          console.log('ovdje')
         if(loginResponse.errorMessage == null || loginResponse.errorMessage === ""){
-            document.cookie = 'Bearer=' + loginResponse.jwt + '; max-age=3600; path=/';
+            document.cookie = 'Bearer=' + loginResponse.jwt + '; max-age=36000;';
+            console.log('ovdhe')
           if (loginResponse.jwt && loginResponse.jwt !== "" && loginResponse.jwt !== undefined) {
             setUser(loginResponse);
             toast.success("Logged in!");
             navigate("/books");
           }
         }
-        else{
+        else {
           alert(loginResponse.errorMessage);
         }
       } catch (err) {

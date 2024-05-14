@@ -35,6 +35,23 @@ public class UserStatements {
 
     }
 
+    public static ResultSet findUser(Connection connection, int userId) {
+        try {
+            String sql = "SELECT usr.ID   as " + UserFields.ID + ",\n" +
+                    "       rle.NAME as " + RoleFields.NAME + "\n" +
+                    "FROM NBP.NBP_USER usr\n" +
+                    "         INNER JOIN NBP.NBP_ROLE rle ON usr.ROLE_ID = rle.ID\n" +
+                    "WHERE usr.ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+            return preparedStatement.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     public static ResultSet findAllUsersWithAddresses(Connection connection, Role role) {
         try {
             String sql = "SELECT usr.ID   as " + UserFields.ID + ",\n" +

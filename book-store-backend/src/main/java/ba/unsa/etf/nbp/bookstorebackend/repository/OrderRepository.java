@@ -4,6 +4,7 @@ import ba.unsa.etf.nbp.bookstorebackend.Role;
 import ba.unsa.etf.nbp.bookstorebackend.constants.BookFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.OrderFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.OrderForm;
+import ba.unsa.etf.nbp.bookstorebackend.constants.Status;
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.AuthorMapper;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.CartItemMapper;
@@ -38,10 +39,30 @@ public class OrderRepository {
     public List<OrderProjection> findAll(int id) {
         Connection connection = databaseService.getConnection();
 
+        Role role = null;
+
+        try {
+            ResultSet rs = UserStatements.findUser(connection, id);
+            assert rs != null;
+            if(rs.next()){
+                role = rs.getObject(2, Role.class);
+            }
+
+        } catch (SQLException e) {
+            LOGGER.error("Exception when acquiring JDBC connection for class: " + OrderProjection.class);
+            throw new RuntimeException(e);
+        }
+
         Map<Integer, OrderProjection> orderProjectionListMap = new HashMap<>();
 
         try {
-            ResultSet rs = OrderStatements.findAllOrdersForUser(connection, id);
+            ResultSet rs;
+
+            if (role.equals(Role.ADMINISTRATOR)) {
+                rs = OrderStatements.findAllOrders(connection);
+            } else {
+                rs = OrderStatements.findAllOrdersForUser(connection, id);
+            }
 
             while(rs.next()){
                 int currentOrderId = rs.getInt(OrderFields.ID);
@@ -54,7 +75,7 @@ public class OrderRepository {
 
             }
 
-            return new ArrayList<OrderProjection>(orderProjectionListMap.values());
+            return new ArrayList<>(orderProjectionListMap.values());
 
         } catch (SQLException e) {
             LOGGER.error("Exception when acquiring JDBC connection for class: " + OrderProjection.class);
@@ -111,6 +132,18 @@ public class OrderRepository {
             }
             int rowsAffected = OrderStatements.createBookToOrder(connection,createdOrderId, orderForm.getBookQuantity());
             return rowsAffected;
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public int updateOrder(int orderId, Status status){
+        Connection connection = databaseService.getConnection();
+
+        try{
+            return OrderStatements.updateOrder(connection, orderId, status);
         }
         catch (Exception e){
             throw new RuntimeException(e);

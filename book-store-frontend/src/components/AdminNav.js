@@ -26,8 +26,8 @@ const AdminNav = () => {
                 <span style={{ fontWeight: 'bold' }}>BookShop</span>
             </Menu.Item>
             <Menu.Menu position='right'>
-                <Menu.Item name='cart' onClick={handleItemClick}>
-                    <Icon name='shopping cart' size='large' color='grey' />
+                <Menu.Item name='orders' onClick={handleItemClick}>
+                    <Icon name='list' size='large' color='grey' />
                 </Menu.Item>
                 <Menu.Item>
                 <Dropdown
