@@ -73,4 +73,17 @@ public class CartItemStatements {
             throw new RuntimeException(e);
         }
     }
+
+    public static int emptyCart(Connection connection, int userId){
+        try{
+            String sql = "DELETE FROM NBP24T3.NBP_CART WHERE USER_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+            return preparedStatement.executeUpdate();
+        }
+        catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 }

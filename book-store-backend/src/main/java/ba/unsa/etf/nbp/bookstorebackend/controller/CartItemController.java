@@ -31,4 +31,9 @@ public class CartItemController {
     public @ResponseBody HttpStatus deleteFromCart(@RequestBody CartItemForm cartItemForm){
         return cartItemRepository.deleteFromCart(cartItemForm);
     }
+
+    @DeleteMapping("/emptyCart")
+    public @ResponseBody HttpStatus deleteFromCart(@RequestParam int userId){
+        return cartItemRepository.emptyCart(userId);
+    }
 }

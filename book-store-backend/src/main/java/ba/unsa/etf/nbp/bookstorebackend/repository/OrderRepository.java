@@ -117,7 +117,7 @@ public class OrderRepository {
         Connection connection = databaseService.getConnection();
         ResultSet user = UserStatements.findUserWithId(connection, orderForm.getUserId());
         if(user ==null){
-            throw new RuntimeException("User eith given id doen't exist");
+            throw new RuntimeException("User with given id doen't exist");
         }
         try{
             int createdOrderId = OrderStatements.createNewOrder(connection, orderForm);

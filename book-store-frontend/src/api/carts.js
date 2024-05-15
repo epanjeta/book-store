@@ -11,6 +11,11 @@ export const removeItemFromCart = async (data) => {
 };
 
 export const addItemToCart = async (data) => {
-  const response = await API.post(`/cartItem/addToCart`, data );
+  const response = await API.post(`/cartItem/addToCart`, data);
+  return response;
+};
+
+export const emptyCart = async (userId) => {
+  const response = await API.post(`/cartItem/emptyCart`, userId);
   return response;
 };

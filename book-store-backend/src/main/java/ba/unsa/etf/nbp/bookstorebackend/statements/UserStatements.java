@@ -82,6 +82,37 @@ public class UserStatements {
 
     }
 
+    public static ResultSet findUserWithAddress(Connection connection, Role role, int id) {
+        try {
+            String sql = "SELECT usr.ID   as " + UserFields.ID + ",\n" +
+                    "       usr.FIRST_NAME as " + UserFields.FIRST_NAME + ",\n" +
+                    "       usr.LAST_NAME as " + UserFields.LAST_NAME + ",\n" +
+                    "       usr.EMAIL as " + UserFields.EMAIL + ",\n" +
+                    "       usr.USERNAME as " + UserFields.USERNAME + ",\n" +
+                    "       usr.BIRTH_DATE as " + UserFields.BIRTH_DATE + ",\n" +
+                    "       rle.NAME as " + RoleFields.NAME + ",\n" +
+                    "       ADDS.ID as " + AddressFields.ID + ",\n" +
+                    "       ADDS.STREET as " + AddressFields.STREET + ",\n" +
+                    "       ADDS.ZIP_CODE as " + AddressFields.ZIP_CODE + ",\n" +
+                    "       CITY.NAME as " + CityFields.NAME + ",\n" +
+                    "       COUNTRY.NAME as " + CountryFields.NAME + "\n" +
+                    "FROM NBP.NBP_USER usr\n" +
+                    "         INNER JOIN NBP.NBP_ROLE rle ON usr.ROLE_ID = rle.ID\n" +
+                    "         LEFT JOIN NBP24T3.NBP_ADDRESS ADDS ON ADDS.ID = usr.ID\n" +
+                    "         LEFT JOIN NBP24T3.NBP_CITY CITY ON ADDS.CITY_ID = CITY.ID\n" +
+                    "         LEFT JOIN NBP24T3.NBP_COUNTRY COUNTRY ON CITY.COUNTRY_ID = COUNTRY.ID\n" +
+                    "WHERE rle.NAME = ? AND usr.ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, Role.BOOK_BUYER.name());
+            preparedStatement.setInt(2, id);
+            return preparedStatement.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
     public static ResultSet findUserWithId(Connection connection, int userId){
         try{
             String sql = "SELECT usr.ID   as " + UserFields.ID + ",\n" +

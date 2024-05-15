@@ -1,9 +1,13 @@
-import { getCartDetails, removeItemFromCart } from 'api/carts';
+import { emptyCart, getCartDetails, removeItemFromCart } from 'api/carts';
+import { getUser } from 'api/users';
+import {completeOrder} from 'api/orders';
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Header, Container, Divider } from 'semantic-ui-react';
 import styled from 'styled-components';
 import placeholder from 'images/placeholder.png';
 import { useStore } from 'components/Login/StoreContext';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const RemoveButton = styled(Button)`
   &&& {
@@ -38,7 +42,9 @@ const GridContainer = styled.div`
 
 const Cart = () => {
     const [cartDetails, setCartDetails] = useState([]);
+    const [userDetails, setUserDetails] = useState([]);
     const { user } = useStore();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBooks = async () => {
@@ -51,6 +57,16 @@ const Cart = () => {
             }
         };
         fetchBooks();
+
+        const fetchUser = async () => {
+            try {
+                const response = await getUser (parseInt(user.userId));
+                setUserDetails(response);
+            } catch (error) {
+                console.error('Error fetching cart details:', error);
+            }
+        };
+        fetchUser();
     }, []);
 
 
@@ -69,9 +85,38 @@ const Cart = () => {
         } 
       };
 
+    const createOrder = async () => {
+        const bookIds = cartDetails.map(cartItem => cartItem.book.id);
+        const bookQuantities= cartDetails.map(cartItem => cartItem.quantity);
+
+        const orderBooks = {};
+        for (let i = 0; i < bookIds.length; i++) {
+            orderBooks[bookIds[i]] = bookQuantities[i];
+        }
+
+        const data = {
+            userId: user.userId,
+            createdAt: new Date().toISOString(),
+            orderAt: new Date().toISOString(),
+            total: cartDetails.reduce((acc, item) => acc + item.book.price, 0),
+            status: "PENDING",
+            paymentMethod: "CASH_ON_DELIVERY",
+            shippingAddressId: userDetails.addressProjection.addressId,
+            bookQuantity: orderBooks
+        }
+        try {
+            await completeOrder(data);
+
+            navigate('/books');
+            toast.success("Order completed")
+        } catch (error) {
+            console.error('Error fetching cart details:', error);
+            toast.error("Unable to complete the order")
+        }
+    };
+
     // Calculate total price of all items in the cart
     const totalPrice = cartDetails.reduce((acc, item) => acc + item.book.price, 0);
-
     return (
         <Container style={{ display: "flex", flexDirection: "column", marginTop: '20px', marginBottom: '20px' }}>
             <GridContainer>
@@ -107,15 +152,16 @@ const Cart = () => {
                 </Table>
                 </GridContainer>
                 <Divider />
+                {cartDetails && cartDetails.length >0 &&
                 <InfoContainer>
                     <Header as='h4'>Shopping Cart Information</Header>
                     <Divider />
                     <Header as='h4'>Cart Value: {totalPrice.toFixed(2)} $</Header> 
                     <p>You can complete your order in the next step.</p>
-                    <Button color='orange'>Complete Order</Button>
+                    <Button color='orange' onClick={() => createOrder()} >Complete Order</Button>
                 </InfoContainer>
+                }
         </Container>
     );
-};
-
+}
 export default Cart;

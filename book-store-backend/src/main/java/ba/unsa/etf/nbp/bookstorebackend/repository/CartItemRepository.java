@@ -97,7 +97,21 @@ public class CartItemRepository {
         }
 
        return HttpStatus.OK;
+    }
+    public HttpStatus emptyCart(int userId){
+        Connection connection = databaseService.getConnection();
+        if(!doesUserExist(connection, userId)){
+            throw new RuntimeException("User with given id does not exist!");
+        }
+        int rowsAffected = 0;
+        try {
+            rowsAffected = CartItemStatements.emptyCart(connection, userId);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
 
+        return HttpStatus.OK;
     }
 
     private boolean doesUserExist(Connection connection, int userId){

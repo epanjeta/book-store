@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Button, Header, Container, Divider} from 'semantic-ui-react';
+import {Table, Button, Header, Container, Divider, Dropdown, DropdownMenu, DropdownItem} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {useStore} from 'components/Login/StoreContext';
 import {getOrders, updateOrders} from "../../api/orders";
+
 
 const RemoveButton = styled(Button)`
   &&& {
@@ -105,29 +106,35 @@ const Orders = () => {
                                         }
                                         {
                                             item.status === 'SHIPPED' && <Table.Cell textAlign='center'>
-                                                <div className="ui fluid search selection dropdown">
-                                                    <div className="item" onClick={() => updateOrder(item, 'COMPLETED') }>COMPLETED</div>
-                                                    <div className="item" onClick={() => updateOrder(item, 'CANCELLED')}>CANCELLED</div>
-                                                </div>
+                                                <Dropdown text='Choose an action'>
+                                                    <DropdownMenu>
+                                                        <DropdownItem text='COMPLETED...'onClick={() => updateOrder(item, 'COMPLETED')}/>
+                                                        <DropdownItem text='CANCELLED'  onClick={() => updateOrder(item, 'CANCELLED')} />
+                                                    </DropdownMenu>
+                                                </Dropdown>
                                             </Table.Cell>
                                         }
                                         {
                                             item.status === 'PROCESSING' && <Table.Cell textAlign='center'>
-                                                <div className="ui fluid search selection dropdown">
-                                                    <div className="item"  onClick={() => updateOrder(item,'SHIPPED')}>SHIPPED</div>
-                                                    <div className="item" onClick={() => updateOrder(item, 'COMPLETED')}>COMPLETED</div>
-                                                    <div className="item" onClick={() => updateOrder(item, 'CANCELLED')}>CANCELLED</div>
-                                                </div>
+                                                <Dropdown text='Choose an action'>
+                                                    <DropdownMenu>
+                                                        <DropdownItem text='SHIPPED' onClick={() => updateOrder(item, 'SHIPPED')}/>
+                                                        <DropdownItem text='COMPLETED...'onClick={() => updateOrder(item, 'COMPLETED')}/>
+                                                        <DropdownItem text='CANCELLED'  onClick={() => updateOrder(item, 'CANCELLED')} />
+                                                    </DropdownMenu>
+                                                </Dropdown>
                                             </Table.Cell>
                                         }
                                         {
                                             item.status === 'PENDING' && <Table.Cell textAlign='center'>
-                                                <div className="ui fluid search selection dropdown">
-                                                    <div className="item" onClick={() => updateOrder(item, 'SHIPPED')}>SHIPPED</div>
-                                                    <div className="item" onClick={() => updateOrder(item, 'COMPLETED')}>COMPLETED</div>
-                                                    <div className="item" onClick={() => updateOrder(item, 'CANCELLED')}>CANCELLED</div>
-                                                    <div className="item" onClick={() => updateOrder(item, 'PROCESSING')}>PROCESSING</div>
-                                                </div>
+                                            <Dropdown text='Choose an action'>
+                                                <DropdownMenu>
+                                                    <DropdownItem text='SHIPPED' onClick={() => updateOrder(item, 'SHIPPED')}/>
+                                                    <DropdownItem text='COMPLETED...'onClick={() => updateOrder(item, 'COMPLETED')}/>
+                                                    <DropdownItem text='CANCELLED'  onClick={() => updateOrder(item, 'CANCELLED')} />
+                                                    <DropdownItem text='PROCESSING'  onClick={() => updateOrder(item, 'PROCESSING')} />
+                                                </DropdownMenu>
+                                            </Dropdown>
                                             </Table.Cell>
                                         }
                                     </>

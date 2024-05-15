@@ -58,6 +58,18 @@ public class UserRepository {
 
     }
 
+    public UserProjection findUserWithAddress(Role role, int id) {
+        Connection connection = databaseService.getConnection();
+        try {
+            ResultSet rs = UserStatements.findUserWithAddress(connection, role, id);
+            return getUserProjections(rs).get(0);
+        } catch (SQLException e) {
+            LOGGER.error("Exception when acquiring JDBC connection for class: " + UserRepository.class);
+            throw new RuntimeException(e);
+        }
+
+    }
+
     private List<UserProjection> getUserProjections(ResultSet rs) throws SQLException {
         if (rs == null) {
             return new ArrayList<>();

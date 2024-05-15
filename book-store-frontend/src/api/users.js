@@ -4,3 +4,8 @@ import API from "./api";
     const response = await API.post("authentication/authenticate", data);
     return response.data;
   };
+
+  export const getUser = async (id) => {
+    const response = await API.get("/user/" + id);
+    return response.data;
+  };

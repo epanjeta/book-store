@@ -10,3 +10,9 @@ export const updateOrders = async (data) => {
     const response = await API.put(`/order/update`,data);
     return response.data;
 };
+
+export const completeOrder = async (data) => {
+    console.log(data)
+    const response = await API.post(`/order/createNewOrder`, data);
+    return response.data;
+};

@@ -85,13 +85,13 @@ const BookDetails = () => {
 
 
     const addToCart = async () => {
+        {console.log("user: "  +  user.userId)}
         try {
             const data = {
-                "userId": parseInt(user.userId),
+                "userId": user.userId,
                 "bookId": book.id,
                 "quantity": parseInt(quantity)
             }
-            console.log(typeof (data.quantity));
             await addItemToCart(data);
             toast.success("Added to cart!");
             navigate("/books");
@@ -127,6 +127,7 @@ const BookDetails = () => {
                         </TextContainer>
                         <TextContainer><h4><SpanCustomWeight weight="700">Language: </SpanCustomWeight>{book.languageCode}
                         </h4></TextContainer>
+                        {user.role === 'BOOK_BUYER' &&
                         <FlexContainer>
                             <TextContainer><h5>Quantity:</h5></TextContainer>
                             <NumberInput size='mini' minValue={0} maxValue={book.stock} value={quantity}
@@ -138,6 +139,7 @@ const BookDetails = () => {
                                 onClick={addToCart}
                             >Add to cart</Button>
                         </FlexContainer>
+                        }
                     </StyledContainerRight>
                 </StyledContainer>
                 <DescriptionContainer>
