@@ -29,6 +29,9 @@ const AdminNav = () => {
                 <Menu.Item name='orders' onClick={handleItemClick}>
                     <Icon name='list' size='large' color='grey' />
                 </Menu.Item>
+                <Menu.Item name='create' onClick={handleItemClick}>
+                    <Icon name='plus square' size='large' color='grey' />
+                </Menu.Item>
                 <Menu.Item>
                 <Dropdown
                     icon={<Icon name='user' size='large' color='grey' />}

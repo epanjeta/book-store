@@ -10,3 +10,8 @@ export const getBook = async (id) => {
   const response = await API.get("/book/" + id);
   return response.data;
 };
+
+export const createBook = async (data) => {
+  const response = await API.post(`/book/createNewBook`, data);
+  return response;
+};
