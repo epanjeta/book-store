@@ -88,7 +88,7 @@ const BookDetails = () => {
         {console.log("user: "  +  user.userId)}
         try {
             const data = {
-                "userId": user.userId,
+                "userId": parseInt(user.userId),
                 "bookId": book.id,
                 "quantity": parseInt(quantity)
             }

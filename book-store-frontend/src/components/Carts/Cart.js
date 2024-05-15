@@ -73,12 +73,12 @@ const Cart = () => {
     const removeFromCart = async (id, quantity) => {
         try {
             const data = {
-                "userId": 11,
+                "userId": parseInt(user.userId),
                 "bookId": id,
                 "quantity": quantity
             }
             await removeItemFromCart(data);
-            const updatedCartDetails = await getCartDetails({ userId: 11 });
+            const updatedCartDetails = await getCartDetails({ userId: parseInt(user.userId) });
             setCartDetails(updatedCartDetails);
         } catch (err) {
             console.error('Unable to remove', err);
