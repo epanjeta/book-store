@@ -5,7 +5,7 @@ import {useStore} from 'components/Login/StoreContext';
 import {getOrders, updateOrders} from "../../api/orders";
 
 
-const RemoveButton = styled(Button)`
+const RemoveButseton = styled(Button)`
   &&& {
     color: orange;
     border: 1px solid orange;

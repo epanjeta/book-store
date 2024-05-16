@@ -1,12 +1,12 @@
 package ba.unsa.etf.nbp.bookstorebackend.statements;
 
-import ba.unsa.etf.nbp.bookstorebackend.constants.AddressFields;
-import ba.unsa.etf.nbp.bookstorebackend.constants.CityFields;
-import ba.unsa.etf.nbp.bookstorebackend.constants.CountryFields;
+import ba.unsa.etf.nbp.bookstorebackend.projection.AutocompleteProjection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommonStatements {
 
