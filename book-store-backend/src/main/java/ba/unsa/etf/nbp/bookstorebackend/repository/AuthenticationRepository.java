@@ -9,6 +9,7 @@ import ba.unsa.etf.nbp.bookstorebackend.projection.UserProjection;
 import ba.unsa.etf.nbp.bookstorebackend.statements.AuthenticationStatements;
 import ba.unsa.etf.nbp.bookstorebackend.util.AuthenticationUtil;
 import ba.unsa.etf.nbp.bookstorebackend.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,30 @@ public class AuthenticationRepository {
             throw new RuntimeException(e);
         }
         return new MessageResponse("OK");
+    }
+
+    public boolean emptyHeader(String authorizationHeader){
+        if(authorizationHeader == null) return true;
+        if(authorizationHeader.isEmpty() || authorizationHeader.isBlank()) return true;
+        else return false;
+    }
+
+    public boolean isAdminRole(String authorizationHeader) {
+        if(emptyHeader(authorizationHeader)) return false;
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims claims = jwtUtil.extractClaims(token);
+        String userType = (String) claims.get("role");
+        if(userType.equals("ADMINISTRATOR")) return true;
+        else return false;
+    }
+
+    public boolean isUserRole(String authorizationHeader) {
+        if(emptyHeader(authorizationHeader)) return false;
+        String token = authorizationHeader.replace("Bearer ", "");
+        Claims claims = jwtUtil.extractClaims(token);
+        String userType = (String) claims.get("role");
+        if(userType.equals("BOOK_BUYER")) return true;
+        else return false;
     }
 
 }
