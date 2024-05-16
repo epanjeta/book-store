@@ -12,6 +12,7 @@ import Books from './Books/Books';
 import Cart from './Carts/Cart';
 import BookDetails from './Books/BookDetails';
 import Orders from "./Admin/Orders";
+import Register from './Register/Register';
 
 const Root = () => {
 
@@ -61,6 +62,7 @@ const Root = () => {
           <Routes>
             <Route path="/*" element={<Login />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/books" element={<Books />} />
             <Route path="/books/details/:id" element={<BookDetails />} />
             <Route path="/cart" element={<Cart />} />

@@ -19,6 +19,10 @@ const validationSchema = Yup.object({
 const Login = () => {
     const navigate = useNavigate();
     const { setUser } = useStore();
+
+    const handleClick = () => {
+      navigate("/register")
+    }
     
     const handleSubmit = async (values) => {
       try {
@@ -87,6 +91,9 @@ const Login = () => {
                     </Form.Field>
                     <Button type="submit" primary fluid disabled={formik.isSubmitting}>
                         Submit
+                    </Button>
+                    <Button basic color='blue' fluid onClick={handleClick} style={{ marginTop: '10px' }}>
+                        New to us? Sign up here!
                     </Button>
                     </Form>
                 )}
