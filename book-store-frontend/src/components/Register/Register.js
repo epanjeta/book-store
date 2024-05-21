@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { useNavigate } from "react-router-dom";
 import * as Yup from 'yup';
 import { toast } from "react-toastify"; 
-import { register } from 'api/users';
+import { register, createAddress } from 'api/users';
 import { useStore } from 'components/Login/StoreContext';
 
 const validationSchema = Yup.object({
@@ -19,7 +19,16 @@ const validationSchema = Yup.object({
     lastName: Yup.string()
       .required('Required'),
     userName: Yup.string()
+      .required('Required'),
+    street: Yup.string()
+      .required('Required'),
+    zipCode: Yup.string()
+      .required('Required'),
+    cityName: Yup.string()
+      .required('Required'),
+    countryName: Yup.string()
       .required('Required')
+
   });
 
 const Register = () => {
@@ -32,8 +41,26 @@ const Register = () => {
     
     const handleSubmit = async (values) => {
       try {
-        const registerResponse = await register(values)
-          console.log('ovdje')
+        const address = {
+            street: values.street,
+            zipCode: values.zipCode,
+            cityName: values.cityName,
+            countryName: values.countryName
+        }
+        const addressResponse = await createAddress(address)
+        const user = {
+            firstName: values.firstName,
+            lastName: values.lastName, 
+            email: values.email,
+            userName: values.userName,
+            password: values.password,
+            phoneNumber: values.phoneNumber,
+            birthDay: values.birthDay,
+            addressProjection: addressResponse
+        }
+        console.log(user)
+        const registerResponse = await register(user)
+        
         if(registerResponse.errorMessage == null || registerResponse.errorMessage === ""){
             navigate("/");
         }
@@ -51,7 +78,7 @@ const Register = () => {
             <Segment>
                 <h1>Signup</h1>
                 <Formik
-                initialValues={{ email: '', password: '', firstName: '', lastName:'', userName:'', phoneNumber:'', birthDay:'' }}
+                initialValues={{ email: '', password: '', firstName: '', lastName:'', userName:'', phoneNumber:'', birthDay:'', street:'', zipCode:'', cityName:'', countryName:'' }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
                 >
@@ -165,6 +192,70 @@ const Register = () => {
                         {formik.touched.birthday && formik.errors.birthday ? (
                         <Message negative>
                             {formik.errors.birthday}
+                        </Message>
+                        ) : null}
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Street Name</label>
+                        <Form.Input
+                        type="text"
+                        name="street"
+                        placeholder="Enter your street name"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.street}
+                        />
+                        {formik.touched.street && formik.errors.street ? (
+                        <Message negative>
+                            {formik.errors.street}
+                        </Message>
+                        ) : null}
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Zip Code</label>
+                        <Form.Input
+                        type="text"
+                        name="zipCode"
+                        placeholder="Enter zip code"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.zipCode}
+                        />
+                        {formik.touched.zipCode && formik.errors.zipCode ? (
+                        <Message negative>
+                            {formik.errors.zipCode}
+                        </Message>
+                        ) : null}
+                    </Form.Field>
+                    <Form.Field>
+                        <label>City Name</label>
+                        <Form.Input
+                        type="text"
+                        name="cityName"
+                        placeholder="Enter city name"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.cityName}
+                        />
+                        {formik.touched.cityName && formik.errors.cityName ? (
+                        <Message negative>
+                            {formik.errors.cityName}
+                        </Message>
+                        ) : null}
+                    </Form.Field>
+                    <Form.Field>
+                        <label>Country Name</label>
+                        <Form.Input
+                        type="text"
+                        name="countryName"
+                        placeholder="Enter country name"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.countryName}
+                        />
+                        {formik.touched.countryName && formik.errors.countryName ? (
+                        <Message negative>
+                            {formik.errors.countryName}
                         </Message>
                         ) : null}
                     </Form.Field>

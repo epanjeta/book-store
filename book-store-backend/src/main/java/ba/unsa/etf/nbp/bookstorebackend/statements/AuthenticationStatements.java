@@ -6,10 +6,7 @@ import ba.unsa.etf.nbp.bookstorebackend.constants.RoleFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.UserFields;
 import ba.unsa.etf.nbp.bookstorebackend.projection.UserProjection;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 
 public class AuthenticationStatements {
 
@@ -69,8 +66,8 @@ public class AuthenticationStatements {
     }
 
     public static int createUser(Connection connection, UserProjection userProjection, Role role){
-        String sql = "INSERT INTO NBP.NBP_USER (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ROLE_ID)\n" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO NBP.NBP_USER (FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, USERNAME, PHONE_NUMBER, BIRTH_DATE, ROLE_ID, ADDRESS_ID)\n" +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, userProjection.getFirstName());
@@ -84,6 +81,10 @@ public class AuthenticationStatements {
             else
                 preparedStatement.setDate(7, null);
             preparedStatement.setInt(8, role.getDatabaseId());
+            if(userProjection.getAddressProjection() != null && userProjection.getAddressProjection().getAddressId() != null)
+                preparedStatement.setInt(9, userProjection.getAddressProjection().getAddressId());
+            else
+                preparedStatement.setNull(9, Types.INTEGER);
             preparedStatement.executeUpdate();
 
             return CommonStatements.getCurrval(connection, UserFields.CURR_VAL);
