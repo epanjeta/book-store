@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class AddressRepository {
@@ -63,17 +64,27 @@ public class AddressRepository {
 
     public AddressProjection createAddress(AddressProjection addressProjection) {
         try {
+            List<AutocompleteProjection> cities = findAllCities();
+            if(addressProjection.getCityId() == null){
+                Optional<AutocompleteProjection> newCity = cities.stream().filter(city -> city.getName().equals(addressProjection.getCityName())).findFirst();
+                if(newCity.isPresent())
+                    addressProjection.setCityId(newCity.get().getId());
+            }
+
+            List<AutocompleteProjection> countries = findAllCountries();
+            if(addressProjection.getCountryId() == null){
+                Optional<AutocompleteProjection> newCountry = countries.stream().filter(country -> country.getName().equals(addressProjection.getCountryName())).findFirst();
+                if(newCountry.isPresent())
+                    addressProjection.setCountryId(newCountry.get().getId());
+            }
+
             if (addressProjection.getCountryId() == null) {
                 int countryId = AddressStatements.createCountry(
                         databaseService.getConnection(),
                         addressProjection.getCountryName());
                 addressProjection.setCountryId(countryId);
-                int cityId = AddressStatements.createCity(
-                        databaseService.getConnection(),
-                        addressProjection.getCityName(),
-                        countryId);
-                addressProjection.setCityId(cityId);
-            } else if (addressProjection.getCityId() == null) {
+            }
+            if (addressProjection.getCityId() == null) {
                 int cityId = AddressStatements.createCity(
                         databaseService.getConnection(),
                         addressProjection.getCityName(),
