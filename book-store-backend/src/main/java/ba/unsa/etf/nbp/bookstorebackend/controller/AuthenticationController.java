@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(path = "authentication")
@@ -22,12 +19,12 @@ public class AuthenticationController {
     protected AuthenticationRepository authenticationRepository;
 
     @PostMapping("authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest){
+    public @ResponseBody ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest){
         return new ResponseEntity<>(authenticationRepository.authenticate(authenticationRequest), HttpStatus.OK);
     }
 
     @PostMapping("register")
-    public ResponseEntity<MessageResponse> register(@RequestBody UserProjection userProjection){
+    public @ResponseBody ResponseEntity<MessageResponse> register(@RequestBody UserProjection userProjection){
         return new ResponseEntity<>(authenticationRepository.register(userProjection), HttpStatus.OK);
     }
 }

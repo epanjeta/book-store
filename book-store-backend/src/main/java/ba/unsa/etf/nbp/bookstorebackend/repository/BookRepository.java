@@ -18,10 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class BookRepository {
@@ -100,5 +97,44 @@ public class BookRepository {
             throw new RuntimeException("Genres aren't written in database");
         }
         return HttpStatus.OK;
+    }
+
+    public BookProjection findBook(int id) {
+        Connection connection = databaseService.getConnection();
+        ResultSet rs = BookStatements.findBookWithIdAllInfo(connection, id);
+        if (rs == null) {
+            return null;
+        }
+
+        try {
+            BookProjection bookProjection = null;
+            if (rs.next()) {
+                bookProjection = BookMapper.createBookFromResultSet(rs);
+            }
+
+            if (bookProjection == null) {
+                return null;
+            }
+            List<String> genres = new ArrayList<>(bookProjection.getGenres());
+            List<AuthorProjection> authorProjections = new ArrayList<>(bookProjection.getAuthors());
+            while (rs.next()) {
+                AuthorProjection author = AuthorMapper.createAuthorFromResultSet(rs);
+                if (authorProjections.stream().noneMatch(a -> a.getId() == author.getId())) {
+                    authorProjections.add(author);
+                }
+                String genre = rs.getString(BookFields.GENRE);
+                if (genres.stream().noneMatch(a -> a.equals(genre))) {
+                    genres.add(genre);
+                }
+            }
+
+            bookProjection.setGenres(genres);
+            bookProjection.setAuthors(authorProjections);
+
+            return bookProjection;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

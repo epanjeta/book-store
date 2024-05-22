@@ -50,12 +50,37 @@ public class CartItemStatements {
     public static int addToCart(Connection connection, int userId, int bookId, int quantity) {
 
         try {
-            String insertSql = "INSERT INTO NBP24T3.NBP_CART (BOOK_ID, USER_ID, QUANTITY) VALUES (?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
-            preparedStatement.setInt(1, bookId);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.setInt(3, quantity);
-            return preparedStatement.executeUpdate();
+            String bookAlreadyInCartSql = "SELECT cart.BOOK_ID AS "+ BookFields.ID +",\n"+
+                    "cart.USER_ID AS "+ UserFields.ID + ",\n"+
+                    "cart.QUANTITY AS "+ CartItemFields.QUANTITY +"\n"+
+                    "FROM NBP24T3.NBP_CART cart\n"+
+                    "WHERE cart.BOOK_ID = ? AND cart.USER_ID = ?";
+            PreparedStatement preparedStatementBookExist = connection.prepareStatement(bookAlreadyInCartSql);
+            preparedStatementBookExist.setInt(1, bookId);
+            preparedStatementBookExist.setInt(2, userId);
+            ResultSet bookInCart =  preparedStatementBookExist.executeQuery();
+            if(bookInCart.next()){
+                //knjiga vec ima u cartu
+                String updateCart = "UPDATE NBP24T3.NBP_CART SET QUANTITY = ? WHERE BOOK_ID = ? AND USER_ID = ?";
+                PreparedStatement updateCartps = connection.prepareStatement(updateCart);
+                updateCartps.setInt(1, quantity + bookInCart.getInt(3));
+                updateCartps.setInt(2,bookId);
+                updateCartps.setInt(3, userId);
+               int rowsAffected =  updateCartps.executeUpdate();
+               decreaseBookStock(connection, bookId, quantity + bookInCart.getInt(3));
+               return rowsAffected;
+            }
+            else{
+                //knjiga nema u cartu
+                String insertSql = "INSERT INTO NBP24T3.NBP_CART (BOOK_ID, USER_ID, QUANTITY) VALUES (?, ?, ?)";
+                PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
+                preparedStatement.setInt(1, bookId);
+                preparedStatement.setInt(2, userId);
+                preparedStatement.setInt(3, quantity);
+                int rowsAffected =  preparedStatement.executeUpdate();
+                decreaseBookStock(connection, bookId, quantity);
+                return rowsAffected;
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -63,6 +88,14 @@ public class CartItemStatements {
 
     public static int deleteFromCart(Connection connection, int userId, int bookId){
         try{
+            String quantitySql = "SELECT QUANTITY FROM NBP24T3.NBP_CART WHERE BOOK_ID = ? AND USER_ID = ?";
+            PreparedStatement preparedStatementQuantity = connection.prepareStatement(quantitySql);
+            preparedStatementQuantity.setInt(1, bookId);
+            preparedStatementQuantity.setInt(2,userId);
+            ResultSet resultSet = preparedStatementQuantity.executeQuery();
+            resultSet.next();
+            int quantity = resultSet.getInt("QUANTITY");
+            increaseStock(connection, bookId,quantity);
             String sql = "DELETE FROM NBP24T3.NBP_CART WHERE BOOK_ID = ? AND USER_ID = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, bookId);
@@ -73,4 +106,70 @@ public class CartItemStatements {
             throw new RuntimeException(e);
         }
     }
+
+    public static int emptyCart(Connection connection, int userId){
+        try{
+            //fali dodavanje stock
+            String cartSql = "SELECT QUANTITY, BOOK_ID FROM NBP24T3.NBP_CART WHERE USER_ID = ?";
+            PreparedStatement preparedStatementcart = connection.prepareStatement(cartSql);
+            preparedStatementcart.setInt(1, userId);
+            ResultSet resultSetCart = preparedStatementcart.executeQuery();
+            while(resultSetCart.next()){
+                int bookId = resultSetCart.getInt("BOOK_ID");
+                int quantity = resultSetCart.getInt("QUANTITY");
+                increaseStock(connection, bookId, quantity);
+            }
+
+            String sql = "DELETE FROM NBP24T3.NBP_CART WHERE USER_ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userId);
+            return preparedStatement.executeUpdate();
+        }
+        catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+    private static int decreaseBookStock(Connection connection, int bookId, int quantity){
+
+        try {
+            String sql = "SELECT book.STOCK AS " + BookFields.STOCK + "\n" +
+                    " FROM NBP24T3.NBP_BOOK book\n" +
+                    "WHERE book.ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, bookId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int stock = resultSet.getInt("STOCK");
+            String updateStockSql = "UPDATE NBP24T3.NBP_BOOK SET STOCK = ? WHERE ID = ?";
+            PreparedStatement updateStock = connection.prepareStatement(updateStockSql);
+            updateStock.setInt(1,stock-quantity);
+            updateStock.setInt(2, bookId);
+            return  updateStock.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+
+    }
+    private static int increaseStock(Connection connection, int bookId, int quantity){
+        try {
+            String sql = "SELECT book.STOCK AS " + BookFields.STOCK + "\n" +
+                    " FROM NBP24T3.NBP_BOOK book\n" +
+                    "WHERE book.ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, bookId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int stock = resultSet.getInt("STOCK");
+            String updateStockSql = "UPDATE NBP24T3.NBP_BOOK SET STOCK = ? WHERE ID = ?";
+            PreparedStatement updateStock = connection.prepareStatement(updateStockSql);
+            updateStock.setInt(1,stock+quantity);
+            updateStock.setInt(2, bookId);
+            return  updateStock.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 }

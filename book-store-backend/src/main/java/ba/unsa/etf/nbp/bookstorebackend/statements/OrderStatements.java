@@ -47,6 +47,38 @@ public class OrderStatements {
 
     }
 
+    public static ResultSet findAllOrders(Connection connection){
+        try{
+            String sql = "SELECT DISTINCT ordr.ID AS " + OrderFields.ID + ",\n"+
+                    "ordr.USER_ID AS " + OrderFields.CUSTOMER_ID + ",\n"+
+                    "ordr.CREATED_AT AS " + OrderFields.CREATED_AT + ",\n"+
+                    "ordr.ORDER_DATE AS " + OrderFields.ORDER_DATE + ",\n"+
+                    "ordr.TOTAL AS " + OrderFields.TOTAL + ",\n"+
+                    "ordr.ORDER_DATE AS " + OrderFields.ORDER_DATE + ",\n"+
+                    "ordr.STATUS AS " + OrderFields.STATUS + ",\n"+
+                    "ordr.ORDER_DATE AS " + OrderFields.ORDER_DATE + ",\n"+
+                    "ordr.PAYMENT_METHOD AS " + OrderFields.PAYMENT_METHOD + ",\n"+
+                    "       ADDS.ID as " + AddressFields.ID + ",\n" +
+                    "       ADDS.STREET as " + AddressFields.STREET + ",\n" +
+                    "       ADDS.ZIP_CODE as " + AddressFields.ZIP_CODE + ",\n" +
+                    "       CITY.NAME as " + CityFields.NAME + ",\n" +
+                    "       COUNTRY.NAME as " + CountryFields.NAME + ",\n" +
+                    "b2o.QUANTITY \n"+
+                    "FROM NBP24T3.NBP_ORDER ordr\n" +
+                    "INNER JOIN NBP24T3.NBP_BOOK2ORDER b2o on b2o.ORDER_ID = ordr.ID \n"+
+                    "INNER JOIN NBP24T3.NBP_ADDRESS ADDS on ordr.SHIPPING_ADDRESS = ADDS.ID \n"+
+                    "         Inner JOIN NBP24T3.NBP_CITY CITY ON ADDS.CITY_ID = CITY.ID\n" +
+                    "         Inner JOIN NBP24T3.NBP_COUNTRY COUNTRY ON CITY.COUNTRY_ID = COUNTRY.ID"
+                    ;
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            return preparedStatement.executeQuery();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public static int createNewOrder(Connection connection, OrderForm orderForm) {
         try{
             String insertSql = "INSERT INTO NBP_ORDER (USER_ID, CREATED_AT, ORDER_DATE, TOTAL, SHIPPING_ADDRESS, STATUS, PAYMENT_METHOD) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -81,6 +113,19 @@ public class OrderStatements {
                 rowsAffected += preparedStatement.executeUpdate();
             }
             return rowsAffected;
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int updateOrder(Connection connection, int orderId, Status status) {
+        try{
+            String sql = "UPDATE NBP24T3.NBP_ORDER SET STATUS = ? WHERE ID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, status.toString());
+            preparedStatement.setInt(2, orderId);
+            return preparedStatement.executeUpdate();
         }
         catch (Exception e){
             throw new RuntimeException(e);
