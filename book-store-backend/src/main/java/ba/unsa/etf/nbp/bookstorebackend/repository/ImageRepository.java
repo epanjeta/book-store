@@ -2,11 +2,8 @@ package ba.unsa.etf.nbp.bookstorebackend.repository;
 
 import ba.unsa.etf.nbp.bookstorebackend.database.DatabaseService;
 import ba.unsa.etf.nbp.bookstorebackend.mapper.ImageMapper;
-import ba.unsa.etf.nbp.bookstorebackend.mapper.PublisherMapper;
 import ba.unsa.etf.nbp.bookstorebackend.projection.ImageProjection;
-import ba.unsa.etf.nbp.bookstorebackend.projection.PublisherProjection;
 import ba.unsa.etf.nbp.bookstorebackend.statements.ImageStatements;
-import ba.unsa.etf.nbp.bookstorebackend.statements.PublisherStatements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +39,18 @@ public class ImageRepository {
 
         return imageProjections;
 
+    }
+
+    public int createImage(byte[] bytes) {
+        int id = 0;
+        try {
+            Connection connection = databaseService.getConnection();
+            id = ImageStatements.uploadImage(connection, bytes);
+            databaseService.getConnection().commit();
+        }catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
     }
 
 }

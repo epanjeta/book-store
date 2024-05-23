@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Button, Container, Dropdown, Form, Grid, Message, Segment,} from 'semantic-ui-react'
+import {Button, Container, Dropdown, Form, Grid, Message, Segment, Input} from 'semantic-ui-react'
 import {Formik} from "formik";
 import * as Yup from "yup";
 import {getPublishers} from "../../api/publisher";
@@ -8,7 +8,7 @@ import {getGenres, getLanguage} from "../../api/autocomplete";
 import {addItemToCart} from "../../api/carts";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
-import {createBook} from "../../api/books";
+import {createBook, createImage} from "../../api/books";
 
 const validationSchema = Yup.object({
     isbn: Yup.string()
@@ -37,6 +37,7 @@ const CreateBook = () =>  {
     const [authors, setAuthors] = useState([]);
     const [authorOptions, setAuthorOptions] = useState([]);
     const [book, setBook] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
     const navigate = useNavigate();
 
     const stateOptions = [
@@ -127,12 +128,15 @@ const CreateBook = () =>  {
     }, [])
 
     const handleSubmit = async (values) => {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        const image = await createImage(formData)
+        values.imageProjection.id = image.data
+        
         const data = {
             ...values,
             ...book
         }
-
-        console.info(data);
         try {
             await createBook(data);
             toast.success("New book created!");
@@ -165,6 +169,10 @@ const CreateBook = () =>  {
         copyBook.genres = d.value
         setBook(copyBook);
     }
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+      };
 
     const value = {
         "title": "",
@@ -338,6 +346,13 @@ const CreateBook = () =>  {
                                             fluid
                                             selection
                                             onChange={setTheAuthors}
+                                        />
+                                    </Form.Field>
+                                    <Form.Field>
+                                        <label>Image</label>
+                                        <Input
+                                            type="file"
+                                            onChange={handleFileChange}
                                         />
                                     </Form.Field>
 

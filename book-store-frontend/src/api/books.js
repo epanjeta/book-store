@@ -24,3 +24,8 @@ export const createBook = async (data) => {
   const response = await API.post(`/book/createNewBook`, data, config);
   return response;
 };
+
+export const createImage = async (data) => {
+  const response = await API.post(`/image/create`, data);
+  return response;
+};

@@ -1,7 +1,9 @@
 package ba.unsa.etf.nbp.bookstorebackend.statements;
 
+import ba.unsa.etf.nbp.bookstorebackend.constants.CityFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.ImageFields;
 import ba.unsa.etf.nbp.bookstorebackend.constants.PublisherFields;
+import ba.unsa.etf.nbp.bookstorebackend.projection.ImageProjection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +24,23 @@ public class ImageStatements {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+
+    }
+
+    public static int uploadImage(Connection connection, byte[] bytes) {
+        try {
+            String sql = "INSERT INTO NBP24T3.NBP_IMAGE (NAME, PHOTO)" +
+                    "VALUES (?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "Name");
+            preparedStatement.setObject(2, bytes);
+            preparedStatement.executeUpdate();
+
+            return CommonStatements.getCurrval(connection, ImageFields.CURR_VAL);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
     }

@@ -2,7 +2,7 @@ import { emptyCart, getCartDetails, removeItemFromCart } from "api/carts";
 import { getUser } from "api/users";
 import { completeOrder } from "api/orders";
 import React, { useEffect, useState } from "react";
-import { Table, Button, Header, Container, Divider } from "semantic-ui-react";
+import { Table, Button, Header, Container, Divider, Dropdown } from "semantic-ui-react";
 import styled from "styled-components";
 import placeholder from "images/placeholder.png";
 import { useStore } from "components/Login/StoreContext";
@@ -43,7 +43,14 @@ const Cart = () => {
   const [cartDetails, setCartDetails] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
   const { user } = useStore();
+  const [paymentMethod, setPaymentMethod] = useState([]);
   const navigate = useNavigate();
+  
+  let payment = [
+    {key: "PAY_PAL", value: "PAY_PAL", text: "PayPal"},
+    {key: "CASH_ON_DELIVERY", value: "CASH_ON_DELIVERY", text: "Cash on delivery"},
+    {key: "CREDIT_CARD", value: "CREDIT_CARD", text: "Credit Card"}
+]
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -100,10 +107,11 @@ const Cart = () => {
       orderAt: new Date().toISOString(),
       total: cartDetails.reduce((acc, item) => acc + item.book.price, 0),
       status: "PENDING",
-      paymentMethod: "CASH_ON_DELIVERY",
+      paymentMethod: paymentMethod,
       shippingAddressId: userDetails.addressProjection.addressId,
       bookQuantity: orderBooks,
     };
+    console.log(data)
     try {
       await completeOrder(data);
 
@@ -113,6 +121,10 @@ const Cart = () => {
       console.error("Error fetching cart details:", error);
       toast.error("Unable to complete the order");
     }
+  };
+
+  const setThePaymentMethod = (e, { value }) => {
+    setPaymentMethod(value);
   };
 
   // Calculate total price of all items in the cart
@@ -176,6 +188,14 @@ const Cart = () => {
           <Divider />
           <Header as="h4">Cart Value: {totalPrice.toFixed(2)} $</Header>
           <p>You can complete your order in the next step.</p>
+          <Dropdown
+            search
+            options={payment}
+            placeholder="Select payment method"
+            fluid
+            selection
+            onChange={setThePaymentMethod}
+          />
           <Button color="orange" onClick={() => createOrder()}>
             Complete Order
           </Button>
