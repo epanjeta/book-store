@@ -19,3 +19,8 @@ import API from "./api";
     const response = await API.get("/user/" + id);
     return response.data;
   };
+
+export const getAllUsers = async () => {
+  const response = await API.get("/user");
+  return response.data;
+};

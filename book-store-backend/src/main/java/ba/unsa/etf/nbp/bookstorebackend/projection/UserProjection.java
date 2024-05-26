@@ -3,6 +3,7 @@ package ba.unsa.etf.nbp.bookstorebackend.projection;
 import ba.unsa.etf.nbp.bookstorebackend.Role;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /** User projection class */
 public class UserProjection {
@@ -99,5 +100,18 @@ public class UserProjection {
 
     public void setAddressProjection(AddressProjection addressProjection) {
         this.addressProjection = addressProjection;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserProjection that = (UserProjection) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
