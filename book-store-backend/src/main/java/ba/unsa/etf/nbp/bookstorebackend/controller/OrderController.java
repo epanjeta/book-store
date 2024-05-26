@@ -27,8 +27,9 @@ public class OrderController {
 
     @PostMapping("/createNewOrder")
     public @ResponseBody int createNewOrder(@RequestBody OrderForm orderFord){
+        orderRepository.createOrderForUser(orderFord);
         cartItemRepository.emptyCart(orderFord.getUserId());
-        return orderRepository.createOrderForUser(orderFord);
+        return 0;
     }
 
     @PutMapping("/update")

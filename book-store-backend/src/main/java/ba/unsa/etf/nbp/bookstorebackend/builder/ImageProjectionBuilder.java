@@ -12,6 +12,7 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Base64;
 
 public class ImageProjectionBuilder {
     private static Logger LOGGER = LoggerFactory.getLogger(ImageProjectionBuilder.class);
@@ -57,6 +58,18 @@ public class ImageProjectionBuilder {
     public ImageProjectionBuilder setPhoto() {
         try {
             imageProjection_.setPhoto(resultSet_.getBytes(ImageFields.PHOTO));
+        } catch (SQLException e) {
+            imageProjection_.setPhoto(null);
+            LOGGER.warn(String.format(WARNING_MESSAGE, ImageFields.PHOTO));
+        }
+
+        return builder_;
+    }
+
+    public ImageProjectionBuilder setByte64() {
+        try {
+            String encoded = Base64.getEncoder().encodeToString(resultSet_.getBytes(ImageFields.PHOTO));
+            imageProjection_.setBase64(encoded);
         } catch (SQLException e) {
             imageProjection_.setPhoto(null);
             LOGGER.warn(String.format(WARNING_MESSAGE, ImageFields.PHOTO));

@@ -45,7 +45,11 @@ const Books = () => {
                     <Card.Group itemsPerRow={5}>
                         {books.map((book, index) => (
                             <BookCard key={index} onClick={() => navigate('/books/details/' + book.id)}>
-                                <Image src={placeholder} wrapped ui={false}/>
+                                {
+                                    book.imageProjection.base64 && book.imageProjection.base64 !== "" ?
+                                        <Image src={'data:image/jpeg;base64,' + book.imageProjection.base64} wrapped ui={false}/> :
+                                        <Image src={placeholder} wrapped ui={false}/>
+                                }
                                 <Card.Content>
                                     <Card.Header>{book.title}</Card.Header>
                                     <Card.Meta>{book.authors.map(author => `${author.firstName} ${author.lastName}`).join(', ')}</Card.Meta>

@@ -15,12 +15,18 @@ export const getBook = async (id) => {
 };
 
 export const createBook = async (data) => {
+  let tk = await token;
   const config = {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${tk}`,
       'Content-Type': 'application/json', // Optionally set content type
     }
   };
   const response = await API.post(`/book/createNewBook`, data, config);
+  return response;
+};
+
+export const createImage = async (data) => {
+  const response = await API.post(`/image/create`, data);
   return response;
 };

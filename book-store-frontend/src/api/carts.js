@@ -5,9 +5,10 @@ const token = getToken();
 
 
 export const getCartDetails = async (params) => {
+  let tk = await token;
   const config = {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${tk}`,
       'Content-Type': 'application/json', // Optionally set content type
     },
     params: params,
@@ -17,9 +18,10 @@ export const getCartDetails = async (params) => {
 };
 
 export const removeItemFromCart = async (data) => {
+  let tk = await token;
   const config = {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${tk}`,
       'Content-Type': 'application/json', // Optionally set content type
     },
     data: data,
@@ -29,9 +31,10 @@ export const removeItemFromCart = async (data) => {
 };
 
 export const addItemToCart = async (data) => {
+  let tk = await token;
   const config = {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${tk}`,
       'Content-Type': 'application/json', // Optionally set content type
     }
   };
@@ -40,9 +43,10 @@ export const addItemToCart = async (data) => {
 };
 
 export const emptyCart = async (userId) => {
+  let tk = await token;
   const config = {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${tk}`,
       'Content-Type': 'application/json', // Optionally set content type
     },
     userId: userId,
