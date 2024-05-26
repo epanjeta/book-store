@@ -51,7 +51,6 @@ const FlexContainer = styled.div`
 
 const DescriptionContainer = styled.div`
   display: flex;
-  padding-left: 3rem;
   padding-right: 3rem;
   flex-direction: column;
 `;
@@ -110,7 +109,11 @@ const BookDetails = () => {
             book ? <WrapperDiv>
                 <StyledContainer>
                     <StyledContainerLeft>
-                        <Image src={placeholder}/>
+                        {
+                            book.imageProjection.base64 && book.imageProjection.base64 !== "" ?
+                                <Image src={'data:image/jpeg;base64,' + book.imageProjection.base64} wrapped ui={false}/> :
+                                <Image src={placeholder} wrapped ui={false}/>
+                        }
                     </StyledContainerLeft>
                     <StyledContainerRight>
                         <TextContainer><h2>{book.title}</h2></TextContainer>
@@ -127,6 +130,8 @@ const BookDetails = () => {
                         </TextContainer>
                         <TextContainer><h4><SpanCustomWeight weight="700">Language: </SpanCustomWeight>{book.languageCode}
                         </h4></TextContainer>
+                        <h3><SpanCustomWeight weight="700">Description: </SpanCustomWeight></h3>
+                        <p>{book.description}</p>
                         {user.role === 'BOOK_BUYER' &&
                         <FlexContainer>
                             <TextContainer><h5>Quantity:</h5></TextContainer>
@@ -142,10 +147,6 @@ const BookDetails = () => {
                         }
                     </StyledContainerRight>
                 </StyledContainer>
-                <DescriptionContainer>
-                    <h3><SpanCustomWeight weight="700">Description: </SpanCustomWeight></h3>
-                    <p>{book.description}</p>
-                </DescriptionContainer>
             </WrapperDiv> : <LoadingSpinner />
         }
         </>

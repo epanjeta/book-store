@@ -117,6 +117,7 @@ public class BookStatements  {
                             "       b.LANGUAGE_CODE        AS " + BookFields.LANGUAGE_CODE + ",\n" +
                             "       img.ID        AS " + ImageFields.ID + ",\n" +
                             "       img.NAME        AS " + ImageFields.NAME+ ",\n" +
+                            "       img.PHOTO        AS " + ImageFields.PHOTO+ ",\n" +
                             "       auth.ID        AS " + AuthorFields.ID + ",\n" +
                             "       auth.FIRST_NAME        AS " + AuthorFields.FIRST_NAME + ",\n" +
                             "       auth.LAST_NAME        AS " + AuthorFields.LAST_NAME + ",\n" +

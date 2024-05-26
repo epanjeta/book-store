@@ -15,9 +15,10 @@ export const getBook = async (id) => {
 };
 
 export const createBook = async (data) => {
+  let tk = await token;
   const config = {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `Bearer ${tk}`,
       'Content-Type': 'application/json', // Optionally set content type
     }
   };

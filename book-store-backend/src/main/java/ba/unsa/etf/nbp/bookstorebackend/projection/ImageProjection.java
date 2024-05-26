@@ -7,6 +7,7 @@ import java.sql.Blob;
 public class ImageProjection {
     private int id;
     private String name;
+    private String base64;
     private byte[] photo;
 
     public ImageProjection() {
@@ -37,5 +38,14 @@ public class ImageProjection {
 
     public void setPhoto(byte[] photo) {
         this.photo = photo;
+    }
+
+    public String getBase64() {
+        return base64;
+    }
+
+    @Nullable
+    public void setBase64(String base64) {
+        this.base64 = base64;
     }
 }

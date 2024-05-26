@@ -17,6 +17,7 @@ public class ImageMapper {
                 .setId()
                 .setName()
                 .setPhoto()
+                .setByte64()
                 .build();
     }
 }

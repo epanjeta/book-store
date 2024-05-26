@@ -141,66 +141,71 @@ const Cart = () => {
         marginBottom: "20px",
       }}
     >
-      <GridContainer>
-        <h2>Shopping Cart</h2>
-        {cartDetails && cartDetails.length === 0 && (
-          <Header color="orange">No products found in your cart...</Header>
-        )}
-        <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Picture</Table.HeaderCell>
-              <Table.HeaderCell>Title</Table.HeaderCell>
-              <Table.HeaderCell>Quantity</Table.HeaderCell>
-              <Table.HeaderCell>Price</Table.HeaderCell>
-              <Table.HeaderCell>Action</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {cartDetails?.map((item, id) => (
-              <Table.Row key={id}>
-                <Table.Cell textAlign="center">
-                  <img
-                    src={placeholder}
-                    alt="book-pic"
-                    style={{ maxWidth: "200px", height: "auto" }}
-                  />
-                </Table.Cell>
-                <Table.Cell textAlign="center">{item.book.title}</Table.Cell>
-                <Table.Cell textAlign="center">{item.quantity}</Table.Cell>
-                <Table.Cell textAlign="center">${item.book.price}</Table.Cell>
-                <Table.Cell textAlign="center">
-                  <RemoveButton
-                    onClick={() => removeFromCart(item.book.id, item.quantity)}
-                  >
-                    Remove
-                  </RemoveButton>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
-      </GridContainer>
-      <Divider />
-      {cartDetails && cartDetails.length > 0 && (
-        <InfoContainer>
-          <Header as="h4">Shopping Cart Information</Header>
-          <Divider />
-          <Header as="h4">Cart Value: {totalPrice.toFixed(2)} $</Header>
-          <p>You can complete your order in the next step.</p>
-          <Dropdown
-            search
-            options={payment}
-            placeholder="Select payment method"
-            fluid
-            selection
-            onChange={setThePaymentMethod}
-          />
-          <Button color="orange" onClick={() => createOrder()}>
-            Complete Order
-          </Button>
-        </InfoContainer>
-      )}
+      {userDetails &&
+       <>
+         <GridContainer>
+           <h2>Shopping Cart</h2>
+           {cartDetails && cartDetails.length === 0 && (
+               <Header color="orange">No products found in your cart...</Header>
+           )}
+           <Table celled>
+             <Table.Header>
+               <Table.Row>
+                 <Table.HeaderCell>Picture</Table.HeaderCell>
+                 <Table.HeaderCell>Title</Table.HeaderCell>
+                 <Table.HeaderCell>Quantity</Table.HeaderCell>
+                 <Table.HeaderCell>Price</Table.HeaderCell>
+                 <Table.HeaderCell>Action</Table.HeaderCell>
+               </Table.Row>
+             </Table.Header>
+             <Table.Body>
+               {cartDetails?.map((item, id) => (
+                   <Table.Row key={id}>
+                     <Table.Cell textAlign="center">
+                       <img
+                           src={placeholder}
+                           alt="book-pic"
+                           style={{ maxWidth: "200px", height: "auto" }}
+                       />
+                     </Table.Cell>
+                     <Table.Cell textAlign="center">{item.book.title}</Table.Cell>
+                     <Table.Cell textAlign="center">{item.quantity}</Table.Cell>
+                     <Table.Cell textAlign="center">${item.book.price}</Table.Cell>
+                     <Table.Cell textAlign="center">
+                       <RemoveButton
+                           onClick={() => removeFromCart(item.book.id, item.quantity)}
+                       >
+                         Remove
+                       </RemoveButton>
+                     </Table.Cell>
+                   </Table.Row>
+               ))}
+             </Table.Body>
+           </Table>
+         </GridContainer>
+         <Divider />
+         {cartDetails && cartDetails.length > 0 && (
+             <InfoContainer>
+               <Header as="h4">Shopping Cart Information</Header>
+               <Divider />
+               <Header as="h4">Cart Value: {totalPrice.toFixed(2)} $</Header>
+               <p>You can complete your order in the next step.</p>
+               <Dropdown
+                   search
+                   options={payment}
+                   placeholder="Select payment method"
+                   fluid
+                   selection
+                   onChange={setThePaymentMethod}
+               />
+               <Button color="orange" onClick={() => createOrder()}>
+                 Complete Order
+               </Button>
+             </InfoContainer>
+         )}
+       </>
+      }
+
     </Container>
   );
 };
