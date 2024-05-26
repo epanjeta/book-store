@@ -9,6 +9,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.draw.DottedLineSeparator;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -16,16 +17,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class OrderPDFExporter {
-    private List<OrderProjection> listOrders;
-    private UserProjection userProjection;
-
+    private Map<UserProjection, List<OrderProjection>> listOrders;
     private LocalDate dateFrom;
     private LocalDate dateUntil;
 
-    public OrderPDFExporter(List<OrderProjection> listOrders) {
+    public OrderPDFExporter(Map<UserProjection, List<OrderProjection>> listOrders) {
         this.listOrders = listOrders;
     }
 
@@ -136,17 +136,14 @@ public class OrderPDFExporter {
         dottedLineSeparator.setLineWidth(2f);
 
         DottedLineSeparator dottedLineSeparatorWhite = new DottedLineSeparator();
-        dottedLineSeparatorWhite.setGap(0);
-        dottedLineSeparatorWhite.setLineWidth(2f);
-        dottedLineSeparatorWhite.setLineColor(Color.WHITE);
+        dottedLineSeparatorWhite.setGap(4);
+        dottedLineSeparatorWhite.setLineWidth(1f);
+        dottedLineSeparatorWhite.setLineColor(Color.GRAY);
 
         com.lowagie.text.Font whiteFont = FontFactory.getFont(FontFactory.TIMES);
         whiteFont.setColor(Color.WHITE);
         Paragraph white = new Paragraph("", whiteFont);
         white.setSpacingBefore(10f);
-
-        document.add(white);
-        document.add(dottedLineSeparator);
 
 
         if (dateFrom != null) {
@@ -162,80 +159,112 @@ public class OrderPDFExporter {
         if (dateUntil != null) {
             font.setSize(12);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String formattedString = dateFrom.format(formatter);
+            String formattedString = dateUntil.format(formatter);
 
             Paragraph date = new Paragraph("Until: " + formattedString, font);
             p.setAlignment(Paragraph.ALIGN_LEFT);
             document.add(date);
         }
 
-        if (userProjection != null) {
-            Paragraph name = new Paragraph("Name: "
-                    + userProjection.getFirstName() + " " + userProjection.getLastName(), font);
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(name);
+        int totaltotal = 0;
 
-            Paragraph email = new Paragraph("E-mail: "
-                    + userProjection.getEmail() , font);
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(email);
+        for (var user : listOrders.keySet()) {
+            if (!CollectionUtils.isEmpty(listOrders.get(user))) {
+                document.add(white);
+                document.add(dottedLineSeparator);
 
-            Paragraph username = new Paragraph("Username: "
-                    + userProjection.getUserName() , font);
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(username);
+                font.setSize(14);
+                Paragraph nameMain = new Paragraph(user.getFirstName() + " " + user.getLastName(), font);
+                nameMain.setAlignment(Paragraph.ALIGN_CENTER);
+                document.add(nameMain);
+
+                font.setSize(12);
+                Paragraph name = new Paragraph("Name: "
+                        + user.getFirstName() + " " + user.getLastName(), font);
+                name.setAlignment(Paragraph.ALIGN_LEFT);
+                document.add(name);
+
+                Paragraph email = new Paragraph("E-mail: "
+                        + user.getEmail() , font);
+                email.setAlignment(Paragraph.ALIGN_LEFT);
+                document.add(email);
+
+                Paragraph username = new Paragraph("Username: "
+                        + user.getUserName() , font);
+                username.setAlignment(Paragraph.ALIGN_LEFT);
+                document.add(username);
+
+                int maxTotal = 0;
+                for (var order: listOrders.get(user)) {
+                    maxTotal += order.getTotal();
+                    document.add(white);
+                    document.add(dottedLineSeparatorWhite);
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    String formattedString = order.getOrderDate().format(formatter);
+                    Paragraph orderDate = new Paragraph("Order date: " +
+                            formattedString, font);
+                    orderDate.setAlignment(Paragraph.ALIGN_LEFT);
+                    document.add(orderDate);
+
+                    Paragraph total = new Paragraph("Total: " +
+                            order.getTotal() + " BAM", font);
+                    total.setAlignment(Paragraph.ALIGN_LEFT);
+                    document.add(total);
+
+                    Paragraph status = new Paragraph("Status: " +
+                            order.getStatus(), font);
+                    status.setAlignment(Paragraph.ALIGN_LEFT);
+                    document.add(status);
+
+                    PdfPTable table = new PdfPTable(8);
+                    table.setWidthPercentage(100f);
+                    table.setWidths(new float[] {3.0f, 3.0f, 3.0f, 1.5f, 1.0f, 2.0f, 3.0f, 1.5f});
+                    table.setSpacingBefore(10);
+
+                    writeTableHeader(table);
+                    writeTableData(table, order.getBooksForOrder());
+
+                    document.add(table);
+                }
+
+                document.add(white);
+                document.add(dottedLineSeparatorWhite);
+                Paragraph total = new Paragraph("Total for " + user.getUserName() + " is: " +
+                        maxTotal + " BAM", font);
+                total.setAlignment(Paragraph.ALIGN_RIGHT);
+                document.add(total);
+
+                totaltotal += maxTotal;
+            }
         }
 
-        for (var order: listOrders) {
-            document.add(white);
-            document.add(dottedLineSeparator);
+        document.add(white);
+        document.add(dottedLineSeparator);
+        document.add(white);
+        document.add(white);
+        Paragraph total = new Paragraph("Total for all orders: " +
+                totaltotal + " BAM", font);
+        total.setAlignment(Paragraph.ALIGN_RIGHT);
+        document.add(total);
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            String formattedString = order.getOrderDate().format(formatter);
-            Paragraph orderDate = new Paragraph("Order date: " +
-                formattedString, font);
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(orderDate);
+        document.add(white);
+        document.add(white);
+        Paragraph sign = new Paragraph("___________________________________", font);
+        sign.setAlignment(Paragraph.ALIGN_LEFT);
+        document.add(sign);
+        Paragraph signHere = new Paragraph("Chairperson", font);
+        signHere.setAlignment(Paragraph.ALIGN_LEFT);
+        document.add(signHere);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedString = LocalDate.now().format(formatter);
 
-            Paragraph total = new Paragraph("Total: " +
-                    formattedString, font);
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(total);
-
-            Paragraph status = new Paragraph("Status: " +
-                    order.getStatus(), font);
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            document.add(status);
-
-            PdfPTable table = new PdfPTable(8);
-            table.setWidthPercentage(100f);
-            table.setWidths(new float[] {3.0f, 3.0f, 3.0f, 1.5f, 1.0f, 2.0f, 3.0f, 1.5f});
-            table.setSpacingBefore(10);
-
-            writeTableHeader(table);
-            writeTableData(table, order.getBooksForOrder());
-
-            document.add(table);
-        }
+        Paragraph date = new Paragraph("Date: " + formattedString, font);
+        date.setAlignment(Paragraph.ALIGN_LEFT);
+        document.add(date);
 
         document.close();
 
-    }
-
-    public List<OrderProjection> getListOrders() {
-        return listOrders;
-    }
-
-    public void setListOrders(List<OrderProjection> listOrders) {
-        this.listOrders = listOrders;
-    }
-
-    public UserProjection getUserProjection() {
-        return userProjection;
-    }
-
-    public void setUserProjection(UserProjection userProjection) {
-        this.userProjection = userProjection;
     }
 
     public LocalDate getDateFrom() {
