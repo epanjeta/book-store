@@ -132,7 +132,7 @@ const BookDetails = () => {
                         </h4></TextContainer>
                         <h3><SpanCustomWeight weight="700">Description: </SpanCustomWeight></h3>
                         <p>{book.description}</p>
-                        {user.role === 'BOOK_BUYER' &&
+                        {user?.role === 'BOOK_BUYER' &&
                         <FlexContainer>
                             <TextContainer><h5>Quantity:</h5></TextContainer>
                             <NumberInput size='mini' minValue={0} maxValue={book.stock} value={quantity}

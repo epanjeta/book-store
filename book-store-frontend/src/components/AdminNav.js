@@ -15,7 +15,7 @@ const AdminNav = () => {
     };
 
     const handleLogout = async (e, { name }) => {
-        localStorage.clear();
+        document.cookie = 'Bearer=;';
         setUser(null);
         navigate("/login");
     };

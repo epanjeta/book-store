@@ -8,6 +8,7 @@ import { useStore } from 'components/Login/StoreContext';
 import { jwtDecode } from "jwt-decode";
 import AdminNav from 'components/AdminNav';
 import CustomerNav from 'components/CustomerNav';
+import GuestNav from './GuestNav';
 import Books from './Books/Books';
 import Cart from './Carts/Cart';
 import BookDetails from './Books/BookDetails';
@@ -15,6 +16,8 @@ import Orders from "./Admin/Orders";
 import CreateBook from "./Admin/CreateBook";
 import Register from './Register/Register';
 import Export from "./Admin/Export";
+import Forbidden from './Forbidden';
+import ProtectedRoute from './ProtectedRoute';
 
 const Root = () => {
 
@@ -60,6 +63,7 @@ const Root = () => {
       <Router>
         {user?.role === "ADMINISTRATOR" && <AdminNav />}
         {user?.role === "BOOK_BUYER" && <CustomerNav />}
+        {(user  === undefined || user === null)   && <GuestNav/>}
         <div>
           <Routes>
             <Route path="/*" element={<Login />} />
@@ -67,10 +71,53 @@ const Root = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/books" element={<Books />} />
             <Route path="/books/details/:id" element={<BookDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/create" element={<CreateBook />} />
-            <Route path="/export" element={<Export />} />
+            <Route path="/forbidden" element={<Forbidden />} />
+
+            <Route
+            path="/cart"
+            element={(
+              <ProtectedRoute
+                element={<Cart />}
+                allowedRoles={["BOOK_BUYER"]} 
+              />
+            )}>
+            </Route>
+            
+            <Route
+            path="/orders"
+            element={(
+              <ProtectedRoute
+                element={<Orders />}
+                allowedRoles={["ADMINISTRATOR","BOOK_BUYER"]} 
+              />
+            )}>
+            </Route>
+            
+            <Route
+            path="/create"
+            element={(
+              <ProtectedRoute
+                element={<CreateBook />}
+                allowedRoles={["ADMINISTRATOR"]} 
+              />
+            )}>
+            </Route>
+
+            <Route
+            path="/export"
+            element={(
+              <ProtectedRoute
+                element={<Export />}
+                allowedRoles={["ADMINISTRATOR"]} 
+              />
+            )}>
+            </Route>
+
+
+            {/* <Route path="/cart" element={<Cart />} /> */}
+            {/* <Route path="/orders" element={<Orders />} /> */}
+            {/* <Route path="/create" element={<CreateBook />} /> */}
+            {/* <Route path="/export" element={<Export />} /> */}
           </Routes>
         </div>
       </Router>
